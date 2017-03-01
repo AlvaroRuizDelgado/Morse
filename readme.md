@@ -1,1 +1,1 @@
-Morse web application for learning purposes.
+Morse web application for my own learning purposes.
