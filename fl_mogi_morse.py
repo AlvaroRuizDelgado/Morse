@@ -8,7 +8,7 @@ def index():
     morse_dict = {"a":"o-", "b":"-ooo", "c":"-o-o"}
     original = "alvaro"
     
-    output = "String to convert:  Alvaro  --->  "
+    output = "String to convert:  {o}  --->  ".format(o=original)
     for character in original:
         if character in morse_dict:
             output += morse_dict[character]
