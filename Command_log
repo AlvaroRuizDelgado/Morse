@@ -1,0 +1,71 @@
+## Openstack cfg commands
+
+Create a private network.
+```bash
+neutron net-create morse-net
+```
+
+Create an IPv4 subnet on the private network.
+```bash
+neutron subnet-create --name demo-subnet --ip-version 4 --dns-nameserver 8.8.4.4 morse-net 192.168.0.0/24
+```
+
+Create a router.
+```bash
+neutron router-create router-morse
+neutron router-interface-add router-morse morse-subnet
+neutron router-gateway-set router-morse public
+```
+
+Create the appropriate security group rules.
+```bash
+openstack security group create morse-sg
+openstack security group rule create --proto icmp --dst-port 0 morse-sg
+openstack security group rule create --proto tcp --dst-port 22 morse-sg
+openstack security group rule create --proto tcp --dst-port 80 morse-sg
+openstack security group rule create --proto tcp --dst-port 5000 morse-sg
+
+```
+
+Launch an instance.
+```bash
+openstack server create --flavor 1 --image cirros --nic net-id=$(openstack network list | awk '/ morse-net / {print $2}') --security-group morse-sg --key-name mykey server01
+```
+
+Assign it a floating ip (from an available pool, e.g. public).
+```bash
+openstack ip floating pool list
+openstack ip floating create public
+openstack ip floating add x.x.x.x server01
+```
+
+## Server cfg commands
+
+Assuming python is pre-installed.
+```bash
+sudo apt-get update
+sudo apt-get -y install python-virtualenv
+mkdir morse
+cd morse
+virtualenv venv
+. venv/bin/activate
+pip install Flask
+```
+
+Now we can create a sample python script and place it in the created folder.
+```Python
+cat > hello_world.py << EOF
+from flask import Flask
+app = Flask(__name__)
+
+@app.route('/')
+def hello_world():
+    return '\nHello, World!\n\n'
+EOF
+```
+
+And run the server.
+```bash
+export FLASK_APP=hello_world.py
+flask run --host=0.0.0.0
+```
