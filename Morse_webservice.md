@@ -17,13 +17,14 @@
     - [x] Git integration
 - [x] Update the program in the Flask Framework
       Needs text field and trigger button.
-- [ ] Take it down, re-create it.
-- [ ] Re-create it through ansible.
+- [x] Take it down, re-create it.
+- [ ] Re-create it through HEAT.
+- [ ] Configure it through Ansible
 - [ ] Make morse database.
-- [ ] Re-create it through ansible.
+- [ ] Update HEAT and Ansible templates.
 - [ ] Modify the python program to use the database.
       I can make a list of characters, grab only those from the database, and map them to a dictionary.
-- [ ] Re-create the whole thing through ansible.
+- [ ] Update it through Ansible.
 - [ ] Add a Jenkins based test to check that the result can be decoded into the original text.
 - [ ] FFS: docker
 

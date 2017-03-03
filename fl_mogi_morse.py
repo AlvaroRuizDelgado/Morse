@@ -7,32 +7,32 @@ app = Flask(__name__)
 def index():
     morse_dict = {"a":"o-", "b":"-ooo", "c":"-o-o"}
     original = "alvaro"
-    
+
     output = "String to convert:  {o}  --->  ".format(o=original)
     for character in original:
         if character in morse_dict:
             output += morse_dict[character]
         else:
             output += character
-    
+
     return output
 
 @app.route('/<string:original>')
 def conversion(original):
     morse_dict = {"a":"o-", "b":"-ooo", "c":"-o-o"}
-    
+
     output = "String to convert:  {o}  --->  ".format(o=original)
     for character in original:
         if character in morse_dict:
             output += morse_dict[character]
         else:
             output += character
-    
+
     return output
 
 @app.route('/about')
 def about():
-    about_file = 'readme.md'
+    about_file = 'about.md'
     return send_file(about_file, mimetype='text/markdown')
 
 if __name__ == '__main__':

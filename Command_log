@@ -29,7 +29,7 @@ openstack security group rule create --proto tcp --dst-port 5000 morse-sg
 
 Launch an instance.
 ```bash
-openstack server create --flavor 1 --image cirros --nic net-id=$(openstack network list | awk '/ morse-net / {print $2}') --security-group morse-sg --key-name mykey server01
+openstack server create --flavor 100 --image $(openstack image list | awk '/Ubuntu/ {print $2}') --nic net-id=$(openstack network list | awk '/ morse-net / {print $2}') --security-group morse-sg --key-name mykey server-01
 ```
 
 Assign it a floating ip (from an available pool, e.g. public).
@@ -68,4 +68,31 @@ And run the server.
 ```bash
 export FLASK_APP=hello_world.py
 flask run --host=0.0.0.0
+```
+
+Or, from git:
+```bash
+sudo apt-get install git
+git clone https://github.com/AlvaroRuizDelgado/Morse.git
+cd Morse
+. install.sh
+. run_flask
+```
+
+## HEAT for stack creation
+
+First, install the client in a virtual environment.
+```bash
+. venv/bin/activate
+pip install python-heatclient
+```
+
+Then, acquire the HOT file in a controller node (e.g. scp).
+```bash
+scp test.yaml student-ruiz@openstack:Heat/test.yaml
+```
+
+Run the HOT file.
+```bash
+heat stack-create -f test.yaml heat-test
 ```

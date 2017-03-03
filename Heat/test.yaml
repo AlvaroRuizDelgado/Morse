@@ -1,0 +1,43 @@
+heat_template_version: 2015-04-30
+
+description: Simple template to deploy a single compute instance
+
+parameters:
+  key_name:
+    type: string
+    label: Key Name
+    description: Name of key-pair to be used for compute instance
+    default: mykey
+  image_id:
+    type: string
+    label: Image ID
+    description: Image to be used for compute instance
+    default: Ubuntu14.04_LTS
+  instance_type:
+    type: string
+    label: Instance Type
+    description: Type of instance (flavor) to be used
+    default: m1.tiny
+    constraints:
+      - allowed_values: [ m1.tiny, m1.small, m1.medium ]
+        description: Value must be one of m1.tiny, m1.small or m1.medium.
+  private_network:
+    type: string
+    label: Private network name or ID
+    description: Network to attach instance to.
+    default: morse-net
+
+resources:
+  my_instance:
+    type: OS::Nova::Server
+    properties:
+      key_name: { get_param: key_name }
+      image: { get_param: image_id }
+      flavor: { get_param: instance_type }
+      networks:
+        - network: { get_param: private_network }
+
+outputs:
+  instance_ip:
+    description: The IP address of the deployed instance
+    value: { get_attr: [my_instance, first_address] }
