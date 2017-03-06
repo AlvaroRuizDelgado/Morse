@@ -44,6 +44,7 @@ openstack ip floating add x.x.x.x server01
 Assuming python is pre-installed.
 ```bash
 sudo apt-get update
+sudo apt-get dist-upgrade
 sudo apt-get -y install python-virtualenv
 mkdir morse
 cd morse

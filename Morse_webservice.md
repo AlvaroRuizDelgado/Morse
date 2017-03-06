@@ -28,14 +28,21 @@
 - [ ] Add a Jenkins based test to check that the result can be decoded into the original text.
 - [ ] FFS: docker
 
-I'm not being able to access the server I created in the OpenStack machine. The options I see are listed below (note that none would allow for icmp to work).
-- VPN.
-- OVS bridge configuration.
-- SSH port redirection --> most promising, but unsure how to do it.
+## Miscellaneous stuff happening
 
-I had a problem with the security group, I wasn't letting servers access each other (TCP 5000 wasn't allowed).
+- [x] I wasn't sure how to access the server I created in the OpenStack machine. The options I saw are listed below (note that none would allow for icmp to work). In the end SSH port redirection is the easiest and the one that has the least impact.
+    - VPN.
+    - OVS bridge configuration.
+    - SSH port redirection --> just add LocalForward in the .ssh/config file.
+    - Configure apache2 with virtual addresses.
+- [x] I had a problem with the security group, I wasn't letting servers access each other (TCP 5000 wasn't allowed).
+- [ ] Check the run.py executable, I'm confused about the naming conventions.
+- [ ] When I create a stack through Heat, it always takes a couple of days until I can use the functionality, and then it works correctly.
+- [ ] When creating a stack through Heat, I sometimes get a situation in which the ssh tunnel doesn't work, and all I get is an empty reply from server.
+```bash
+Channel 13: open failed: connect failed: Connection refused
+```
 
-Check the run.py executable, I'm confused about the naming conventions.
 
 $$
 x = 3

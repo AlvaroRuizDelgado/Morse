@@ -107,6 +107,15 @@ resources:
       networks:
         - port: { get_resource: instance_port }
 #        - network: { get_param: private_network }
+      user_data:
+        get_file: initial_config.sh
+      # user_data: |
+      #   #!/bin/bash
+      #   sudo apt-get update
+      #   sudo apt-get upgrade
+      #   sudo apt-get install git
+      #   git clone https://github.com/AlvaroRuizDelgado/Morse.git
+      #   # ...
 
   floating_IP:
     type: OS::Neutron::FloatingIP
