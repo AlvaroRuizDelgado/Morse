@@ -1,7 +1,12 @@
 #!/bin/bash
+echo "script initiated"
+touch started
 sudo apt-get update
-sudo apt-get upgrade
-sudo apt-get install git
+# cd /home/ubuntu/
+# echo "export PS1=\"\t \[\033[36m\]\u\[\033[m\]@\[\033[32m\]\h:\[\033[33;1m\]\w\[\033[m\]\\$ \"" >> .bash_profile
+# sudo apt-get -y dist-upgrade
+sudo apt-get -y install git
 git clone https://github.com/AlvaroRuizDelgado/Morse.git
-. Morse/install.sh
-. Morse/run_flask
+cd Morse
+. install.sh
+. run_flask

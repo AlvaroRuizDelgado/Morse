@@ -2,4 +2,4 @@
 # Enables automatic reloader
 export FLASK_DEBUG=1
 export FLASK_APP=fl_mogi_morse.py
-flask run --host=0.0.0.0 &
+sudo flask run --host=0.0.0.0 &

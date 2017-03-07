@@ -37,11 +37,16 @@
     - Configure apache2 with virtual addresses.
 - [x] I had a problem with the security group, I wasn't letting servers access each other (TCP 5000 wasn't allowed).
 - [ ] Check the run.py executable, I'm confused about the naming conventions.
-- [ ] When I create a stack through Heat, it always takes a couple of days until I can use the functionality, and then it works correctly.
-- [ ] When creating a stack through Heat, I sometimes get a situation in which the ssh tunnel doesn't work, and all I get is an empty reply from server.
-```bash
-Channel 13: open failed: connect failed: Connection refused
-```
+- [x] When I create a stack through Heat, it always takes a couple of days until I can use the functionality, and then it works correctly --> the problem is in my .ssh/config, or more precisely, in when it is reloaded.
+  - [ ] Closing and opening the terminal application solves the issue, as it loads the .ssh/config file, but there should be a less clunky way to do it.
+  - [x] When creating a stack through Heat, I sometimes get a situation in which the ssh tunnel doesn't work, and all I get is an empty reply from server --> this is the same problem as above.
+  ```bash
+  Channel 13: open failed: connect failed: Connection refused
+  ```
+- [ ] Heat:
+  - [ ] The user_data is not executed. I found that it is copied into a folder though.
+  - [ ] A stack with SOFTWARE_CONFIG user_data remains forever in the "building" state, until it is deemed "failed" for taking too long.
+
 
 
 $$
