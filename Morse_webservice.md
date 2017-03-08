@@ -48,7 +48,10 @@
   - [x] A stack with SOFTWARE_CONFIG user_data remains forever in the "building" state, until it is deemed "failed" for taking too long --> fixed if I don't use deployment.
   - [ ] If I use deployment, the user data doesn't run, and the creation remains in progress until it fails.
 
-
+- [ ] Ansible
+  - [x] SSH bastion setup.
+  - [ ] SSH multiplexing.
+  - [ ] Configuration through Ansible.
 
 $$
 x = 3

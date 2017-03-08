@@ -1,0 +1,13 @@
+#!/bin/bash
+# curl 192.168.100.220:5000
+# echo ""
+# curl 192.168.100.211:5000
+# echo ""
+
+targets=($(openstack server list | awk '/ACTIVE/ { print $9 }'))
+length=${#targets[@]}
+for ((i = 0; i != length; i++)); do
+   echo "target $i: '${targets[i]}'"
+   curl ${targets[i]}:5000
+   echo " "
+done
