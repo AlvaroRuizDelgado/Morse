@@ -65,6 +65,7 @@ resources:
           router_id: { get_resource: router_morse }
           subnet_id: { get_resource: private_subnet }
 
+
   morse_sg:
     type: OS::Neutron::SecurityGroup
     properties:
@@ -105,33 +106,21 @@ resources:
       flavor: { get_param: flavor }
       networks:
         - port: { get_resource: instance_port }
-      user_data_format: SOFTWARE_CONFIG
-      # user_data:
-      #   get_file: initial_config.sh
+#        - network: { get_param: private_network }
+      user_data_format: RAW
+      user_data:
+        get_file: initial_config.sh
       # user_data: |
       #   #!/bin/bash
+      #   echo "user_data initiated"
       #   sudo apt-get update
-      #   sudo apt-get -y dist-upgrade
+      #   # sudo apt-get -y dist-upgrade
       #   sudo apt-get -y install git
       #   git clone https://github.com/AlvaroRuizDelgado/Morse.git
-      #   . Morse/install.sh
-      #   . Morse/run_flask
-      #   # ...
-
-  config:
-    type: OS::Heat::SoftwareConfig
-    properties:
-      group: script
-      config:
-        get_file: initial_config.sh
-
-  deployment:
-    type: OS::Heat::SoftwareDeployment
-    properties:
-      config:
-        get_resource: config
-      server:
-        get_resource: morse_server
+      #   cd Morse
+      #   . install.sh
+      #   . run_flask
+      #   echo "user_data finished"
 
   floating_IP:
     type: OS::Neutron::FloatingIP

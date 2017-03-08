@@ -65,7 +65,6 @@ resources:
           router_id: { get_resource: router_morse }
           subnet_id: { get_resource: private_subnet }
 
-
   morse_sg:
     type: OS::Neutron::SecurityGroup
     properties:
@@ -98,6 +97,21 @@ resources:
       fixed_ips:
         - subnet_id: { get_resource: private_subnet }
 
+  boot_script:
+    type: OS::Heat::SoftwareConfig
+    properties:
+      group: script
+      config:
+        get_file: initial_config.sh
+
+  deployment_server:
+    type: OS::Heat::SoftwareDeployment
+    properties:
+      config:
+        get_resource: boot_script
+      server:
+        get_resource: morse_server
+
   morse_server:
     type: OS::Nova::Server
     properties:
@@ -106,20 +120,8 @@ resources:
       flavor: { get_param: flavor }
       networks:
         - port: { get_resource: instance_port }
-#        - network: { get_param: private_network }
-      user_data_format: RAW
-      user_data:
-        get_file: initial_config.sh
-      # user_data: |
-      #   #!/bin/bash
-      #   touch started
-      #   sudo apt-get update
-      #   # sudo apt-get -y dist-upgrade
-      #   sudo apt-get -y install git
-      #   git clone https://github.com/AlvaroRuizDelgado/Morse.git
-      #   . Morse/install.sh
-      #   . Morse/run_flask
-      #   # ...
+      user_data_format: SOFTWARE_CONFIG
+      # user_data: { get_resource: boot_script }
 
   floating_IP:
     type: OS::Neutron::FloatingIP

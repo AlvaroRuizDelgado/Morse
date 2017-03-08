@@ -18,7 +18,7 @@
 - [x] Update the program in the Flask Framework
       Needs text field and trigger button.
 - [x] Take it down, re-create it.
-- [ ] Re-create it through HEAT.
+- [x] Re-create it through HEAT.
 - [ ] Configure it through Ansible
 - [ ] Make morse database.
 - [ ] Update HEAT and Ansible templates.
@@ -44,8 +44,9 @@
   Channel 13: open failed: connect failed: Connection refused
   ```
 - [ ] Heat:
-  - [ ] The user_data is not executed. I found that it is copied into a folder though.
-  - [ ] A stack with SOFTWARE_CONFIG user_data remains forever in the "building" state, until it is deemed "failed" for taking too long.
+  - [x] The user_data is not executed. I found that it is copied into a folder though --> it was executed, but it was in the root folder (I expected it in the user folder).
+  - [x] A stack with SOFTWARE_CONFIG user_data remains forever in the "building" state, until it is deemed "failed" for taking too long --> fixed if I don't use deployment.
+  - [ ] If I use deployment, the user data doesn't run, and the creation remains in progress until it fails.
 
 
 
