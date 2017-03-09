@@ -51,6 +51,16 @@
   - [x] SSH bastion setup.
   - [ ] SSH multiplexing.
   - [ ] Configuration through Ansible.
+    - [ ] Difficulties keeping the flask server running after the playbook ends. Tried daemon, but it only works for C programs.
+    - [ ] The first time I connect to a server it asks me if I want to add it to the known_servers file. How to avoid that?
+    - [ ] Change the "package" instances to "apt", and add a check for the OS.
+  - [ ] Starting flask through ansible makes it so it finishes when the playbook ends.
+    - [x] Possible circumvention: running it with nohup:
+          ```bash
+          nohup flask run --host=0.0.0.0 & >> flask.log
+          ```
+      - [ ] I should then check whether it's running (registry). Ignoring the error works in this case, but it's not good practice.
+    - [ ] The best option is to make it a service and use the "service" module.
 
 - [ ] SSH problems.
   - [ ] If I add pi stuff, LocalForward stops being active. I need to reboot to enable the functionality. Is it because of screen keeping ssh connections in the background?

@@ -1,27 +1,93 @@
 ---
 - hosts: morse
+  vars:
+    repo_url: https://github.com/AlvaroRuizDelgado/Morse.git
+    repo_branch: master
+    webapp_dir: /home/ubuntu
+    webapp_name: Morse
+    flask_app: fl_mogi_morse.py
+    venv: venv
 
   tasks:
-  - name: Create a test file
-    file: path=test_file state=touch
-  - name: Update the system
-    package: update_cache=yes
-    become: true
-  - name: Upgrade the distribution
-    package: upgrade=dist
-    become: true
+  # - name: Create a test file
+  #   file: path=test_file state=touch
+  #   tags: debug
+  # - name: Update the system
+  #   apt: update_cache=yes
+  #   when: ansible_os_family == "Debian"
+  #   become: true
+  #   tags: update
+  # - name: Upgrade the distribution
+  #   apt: upgrade=dist
+  #   when: ansible_os_family == "Debian"
+  #   become: true
+  #   tags: update
   - name: Install git
     package:
       name: git
       state: latest
-  - name: Clone the data
-    command: git clone https://github.com/AlvaroRuizDelgado/Morse.git
-  - name: Install virtualenv
+    become: true
+    tags: git
+  - name: Check if the git directory exists
+    stat: path={{ webapp_dir }}/{{ webapp_name }}
+    register: check_git_path
+    tags: git
+  - name: Clone the data if it doesn't exist
+    git:
+      repo: "{{ repo_url }}"
+      dest: "{{ webapp_dir }}/{{ webapp_name }}"
+      version: "{{ repo_branch }}"
+    #   update: yes
+    # command: git clone {{ repo_url }}
+    # args:
+    #   creates: Morse/
+    when: check_git_path.stat.exists == false
+    tags: git
+  - name: Update the data if it exists
+    git:
+      repo: "{{ repo_url }}"
+      dest: "{{ webapp_dir }}/{{ webapp_name }}"
+      version: "{{ repo_branch }}"
+      clone: no
+    # command: git clone {{ repo_url }}
+    # args:
+    #   creates: Morse/
+    when: check_git_path.stat.exists
+    tags: git
+  - name: Install virtualenv.
     package:
       name: python-virtualenv
       state: latest
-
-  # - name: update the system
-  #   apt:
-  #     name=update
-  #     state=latest
+    become: true
+    tags: flask
+  - name: Virtual environment and install requirements.
+    pip:
+      requirements:
+        name: Flask
+        # requirements: ~/Morse/requirements.txt
+        virtualenv: ~/Morse/{{ venv }}
+        virtualenv_python: python2.7
+    tags: flask
+  - name: Run flask
+    command: "{{ venv }} nohup flask run --host=0.0.0.0 & >> flask.log"
+    args:
+      chdir: "{{ webapp_dir }}/{{ webapp_name }}/"
+      environment: FLASK_APP={{ flask_app }}
+      executable: /bin/bash
+    tags: flask
+  # - name: Create venv,install Flask, run it
+  #   shell: |
+  #     virtualenv venv
+  #     . venv/bin/activate
+  #     pip install Flask
+  #     export FLASK_APP=fl_mogi_morse.py
+  #     nohup flask run --host=0.0.0.0 & >> flask.log
+  #   args:
+  #     chdir: Morse/
+  #       # environment: FLASK_APP={{ flask_app }}
+  #   tags: flask
+  # - name: Run flask
+  #   command:  . run_flask
+  #   args:
+  #     chdir: Morse/
+  #   tags: flask
