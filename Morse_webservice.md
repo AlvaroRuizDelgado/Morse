@@ -19,14 +19,13 @@
       Needs text field and trigger button.
 - [x] Take it down, re-create it.
 - [x] Re-create it through HEAT.
-- [ ] Configure it through Ansible
-- [ ] Make morse database.
-- [ ] Update HEAT and Ansible templates.
+- [x] Configure it through Ansible
+- [ ] Add second web-server and load balancer.
+- [ ] Provision database node.
 - [ ] Modify the python program to use the database.
       I can make a list of characters, grab only those from the database, and map them to a dictionary.
-- [ ] Update it through Ansible.
 - [ ] Add a Jenkins based test to check that the result can be decoded into the original text.
-- [ ] FFS: docker
+- [ ] FFS: docker, GitLab, Gerrit
 
 ## Miscellaneous stuff happening
 
@@ -52,6 +51,14 @@
   - [x] SSH bastion setup.
   - [ ] SSH multiplexing.
   - [ ] Configuration through Ansible.
+
+- [ ] SSH problems.
+  - [ ] If I add pi stuff, LocalForward stops being active. I need to reboot to enable the functionality. Is it because of screen keeping ssh connections in the background?
+    - Whenever I connect through ssh to a server I receive an error message:
+    ```bash
+    bind: Address already in use
+    channel_setup_fwd_listener_tcpip: cannot listen to port: 8080
+    ```
 
 $$
 x = 3

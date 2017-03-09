@@ -3,3 +3,4 @@ venv
 
 # Compiled code
 *.pyc
+*.retry

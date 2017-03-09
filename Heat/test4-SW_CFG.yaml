@@ -104,14 +104,6 @@ resources:
       config:
         get_file: initial_config.sh
 
-  deployment_server:
-    type: OS::Heat::SoftwareDeployment
-    properties:
-      config:
-        get_resource: boot_script
-      server:
-        get_resource: morse_server
-
   morse_server:
     type: OS::Nova::Server
     properties:
@@ -121,7 +113,17 @@ resources:
       networks:
         - port: { get_resource: instance_port }
       user_data_format: SOFTWARE_CONFIG
-      # user_data: { get_resource: boot_script }
+      user_data: { get_resource: boot_script }
+
+  # deployment:
+  #   type: OS::Heat::SoftwareDeployment
+  #   properties:
+  #     config:
+  #       get_resource: boot_script
+  #     server:
+  #       get_resource: morse_server
+  #     actions:
+  #     - CREATE
 
   floating_IP:
     type: OS::Neutron::FloatingIP

@@ -2,8 +2,25 @@
 - hosts: morse
 
   tasks:
-  - name: create a test failed
-    command: touch test_file
+  - name: Create a test file
+    file: path=test_file state=touch
+  - name: Update the system
+    package: update_cache=yes
+    become: true
+  - name: Upgrade the distribution
+    package: upgrade=dist
+    become: true
+  - name: Install git
+    package:
+      name: git
+      state: latest
+  - name: Clone the data
+    command: git clone https://github.com/AlvaroRuizDelgado/Morse.git
+  - name: Install virtualenv
+    package:
+      name: python-virtualenv
+      state: latest
+
   # - name: update the system
   #   apt:
   #     name=update
