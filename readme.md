@@ -8,4 +8,4 @@ Architecture:
 - 2 web servers accessible through a round-robin load balancer.
 - 1 database node for the web servers to obtain the morse data.
 
-Using: python, flask, git, heat, ansible.
+Using: python, flask, git, heat, ansible, openstack.

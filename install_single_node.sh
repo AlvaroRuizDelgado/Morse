@@ -9,3 +9,4 @@ sudo apt -y install python-virtualenv
 virtualenv venv
 . venv/bin/activate
 pip install Flask
+. run_flask

@@ -5,23 +5,25 @@
     repo_branch: master
     webapp_dir: /home/ubuntu
     webapp_name: Morse
-    flask_app: fl_mogi_morse.py
     venv: venv
+    flask_app: fl_mogi_morse.py
 
   tasks:
   # - name: Create a test file
   #   file: path=test_file state=touch
   #   tags: debug
-  # - name: Update the system
-  #   apt: update_cache=yes
-  #   when: ansible_os_family == "Debian"
-  #   become: true
-  #   tags: update
+
+  - name: Update the system
+    apt: update_cache=yes
+    when: ansible_os_family == "Debian"
+    become: true
+    tags: update
   # - name: Upgrade the distribution
   #   apt: upgrade=dist
   #   when: ansible_os_family == "Debian"
   #   become: true
   #   tags: update
+
   - name: Install git
     package:
       name: git
@@ -37,10 +39,6 @@
       repo: "{{ repo_url }}"
       dest: "{{ webapp_dir }}/{{ webapp_name }}"
       version: "{{ repo_branch }}"
-    #   update: yes
-    # command: git clone {{ repo_url }}
-    # args:
-    #   creates: Morse/
     when: check_git_path.stat.exists == false
     tags: git
   - name: Update the data if it exists
@@ -49,11 +47,9 @@
       dest: "{{ webapp_dir }}/{{ webapp_name }}"
       version: "{{ repo_branch }}"
       clone: no
-    # command: git clone {{ repo_url }}
-    # args:
-    #   creates: Morse/
     when: check_git_path.stat.exists
     tags: git
+
   - name: Install virtualenv.
     package:
       name: python-virtualenv
@@ -62,32 +58,17 @@
     tags: flask
   - name: Virtual environment and install requirements.
     pip:
-      requirements:
-        name: Flask
-        # requirements: ~/Morse/requirements.txt
-        virtualenv: ~/Morse/{{ venv }}
-        virtualenv_python: python2.7
+      name: Flask
+      state: latest
+      # requirements: "{{ webapp_dir }}/{{ webapp_name }}/requirements.txt"
+      virtualenv: "{{ webapp_dir }}/{{ webapp_name }}/{{ venv }}/"
+      # virtualenv_python: python2.7
     tags: flask
   - name: Run flask
-    command: "{{ venv }} nohup flask run --host=0.0.0.0 & >> flask.log"
+    shell:
+      nohup venv/bin/flask run --host=0.0.0.0 > flask.log 2>&1 &
+    environment:
+      FLASK_APP: "{{ flask_app }}"
     args:
-      chdir: "{{ webapp_dir }}/{{ webapp_name }}/"
-      environment: FLASK_APP={{ flask_app }}
-      executable: /bin/bash
+      chdir: Morse/
     tags: flask
-  # - name: Create venv,install Flask, run it
-  #   shell: |
-  #     virtualenv venv
-  #     . venv/bin/activate
-  #     pip install Flask
-  #     export FLASK_APP=fl_mogi_morse.py
-  #     nohup flask run --host=0.0.0.0 & >> flask.log
-  #   args:
-  #     chdir: Morse/
-  #       # environment: FLASK_APP={{ flask_app }}
-  #   tags: flask
-  # - name: Run flask
-  #   command:  . run_flask
-  #   args:
-  #     chdir: Morse/
-  #   tags: flask
