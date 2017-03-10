@@ -4,3 +4,4 @@ venv
 # Compiled code
 *.pyc
 *.retry
+*.log
