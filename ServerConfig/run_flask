@@ -1,0 +1,6 @@
+. venv/bin/activate
+# DEBUG enables automatic reloader
+export FLASK_DEBUG=1
+export FLASK_APP=fl_morse.py
+# nohup flask run --host=0.0.0.0 --port=5000 > flask.log 2>&1 &
+flask run --host=0.0.0.0 --port=5000
