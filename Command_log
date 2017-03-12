@@ -48,9 +48,14 @@ sudo apt-get dist-upgrade
 sudo apt-get -y install python-virtualenv
 mkdir morse
 cd morse
-virtualenv venv
+virtualenv venv --system-site-package
 . venv/bin/activate
 pip install Flask
+pip install flask-mysql
+```
+If it says that Flask is already installed, try:
+```bash
+pip install Flask --upgrade
 ```
 
 Now we can create a sample python script and place it in the created folder.
@@ -73,7 +78,7 @@ flask run --host=0.0.0.0
 
 Or, from git:
 ```bash
-sudo apt-get install git
+sudo apt-get install -y git
 git clone https://github.com/AlvaroRuizDelgado/Morse.git
 cd Morse
 . install.sh
@@ -96,4 +101,30 @@ scp test.yaml student-ruiz@openstack:Heat/test.yaml
 Run the HOT file.
 ```bash
 heat stack-create -f test.yaml heat-test
+```
+
+## Database creation.
+
+Load the morse.csv file into MariaDB.
+```bash
+sudo apt-get install -y mariadb-server
+mysql -u root -p
+CREATE USER morse;
+CREATE DATABASE morse;
+GRANT ALL PRIVILEGES ON morse.* TO 'morse'@'localhost' IDENTIFIED BY 'morse';
+GRANT ALL PRIVILEGES ON morse.* TO 'morse'@'%' IDENTIFIED BY 'morse';
+USE morse;
+CREATE TABLE morse (
+    `Character` VARCHAR(1) CHARACTER SET utf8,
+    `Code` VARCHAR(6) CHARACTER SET utf8,
+    PRIMARY KEY (`Character`)
+);
+LOAD DATA LOCAL INFILE "morse.csv" INTO TABLE morse.morse FIELDS TERMINATED BY '$' LINES TERMINATED BY '\n';
+```
+
+Then we need to install the python connectors for MariaDB.
+```bash
+. venv/bin/activate
+sudo apt-get install python-mysqldb
+pip install Flask-MySQLdb
 ```

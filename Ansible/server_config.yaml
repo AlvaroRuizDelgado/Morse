@@ -5,7 +5,7 @@
     repo_branch: master
     webapp_dir: /home/ubuntu
     webapp_name: Morse
-    venv: venv
+    venv: ServerConfig/venv
     flask_app: fl_mogi_morse.py
 
   tasks:
@@ -66,9 +66,9 @@
     tags: flask
   - name: Run flask
     shell:
-      nohup venv/bin/flask run --host=0.0.0.0 > flask.log 2>&1 &
+      nohup bin/flask run --host=0.0.0.0 > flask.log 2>&1 &
     environment:
       FLASK_APP: "{{ flask_app }}"
     args:
-      chdir: Morse/
+      chdir: M"{{ webapp_dir }}/{{ webapp_name }}/{{ venv }}/"
     tags: flask
