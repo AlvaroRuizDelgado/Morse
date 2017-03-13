@@ -9,5 +9,5 @@ sudo apt -y install python-virtualenv
 virtualenv venv --system-site-package
 . venv/bin/activate
 pip install Flask
-pip install flask-mysql
-. run_flask
+# pip install flask-mysql
+. run_mogi
