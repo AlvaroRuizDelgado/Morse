@@ -23,7 +23,7 @@
 - [ ] Connect HEAT and Ansible.
 - [ ] Add second web-server and load balancer.
 - [ ] Provision database node.
-- [ ] Modify the python program to use the database.
+- [x] Modify the flask app to use the database.
       I can make a list of characters, grab only those from the database, and map them to a dictionary.
 - [ ] Add a Jenkins based test to check that the result can be decoded into the original text.
 - [ ] FFS: docker, GitLab, Gerrit
@@ -46,6 +46,7 @@
   ```
     - [x] Closing and opening the terminal application solves the issue, as it loads the .ssh/config file.
   - [ ] Dynamic inventory to hook Ansible.
+  - [ ] Separate the modules in different files (type: folder/file.yaml).
 
 - [ ] Ansible
   - [ ] Configuration through Ansible.
@@ -60,8 +61,10 @@
       ```
           Interesting to note that this won't run in command mode, because nohup needs a shell to start with.
       - [ ] If I'm using nohup, I should check whether it's already running (registry variable). Ignoring the error works in this case, but it's not good practice.
+        - [x] I'm killing it if it exists, still can't figure how to check if it's running using shell and a register. If the process is not there, it fails and ends --> ignore_errors: yes.
     - [ ] The best option is to make it a service and use the "service" module.
   - [ ] Openstack.py to retrieve the IPs of the instances created by Heat and add them to hosts. How to continue to Ansible from Heat?
+  - [ ] Separate the modules in different files (or folders in this case).
 
 - [ ] SSH
   - [x] I wasn't sure how to access the server I created in the OpenStack machine. The options I saw are listed below (note that none would allow for icmp to work). In the end SSH port redirection is the easiest and the one that has the least impact.
@@ -81,6 +84,9 @@
   - [x] SSH bastion setup for Ansible.
   - [ ] SSH multiplexing through ControlMaster. It seems though that it may not be a good idea, as killing the parent ssh connection could take down the whole thing. Should I use it?
   - [ ] I would like a less clunky way to reload the config file, without having to restart the terminal.
+
+- [ ] Test automation
+  - [x] My manual main test consists on running "curl IP:5000" and see that it works.
 
 - [ ] MariaDB
   - [x] Finding the right connector for flask was a bit tricky. In the end the only package needed is flask-mysql, but it needs to install fully (--upgrade option can help).

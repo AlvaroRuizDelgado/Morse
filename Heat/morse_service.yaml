@@ -1,0 +1,121 @@
+heat_template_version: 2015-04-30
+description: Create a webservice from the ground up.
+
+parameters:
+  key_name:
+    type: string
+    label: Key Name
+    description: Name of key-pair to be used for compute instance
+    default: mykey
+  image_id:
+    type: string
+    label: Image ID
+    description: Image to be used for compute instance
+    default: Ubuntu14.04_LTS
+  flavor:
+    type: string
+    label: Instance Type
+    description: Type of instance (flavor) to be used
+    default: m1.tiny
+    constraints:
+      - allowed_values: [ m1.tiny, m1.small, m1.medium ]
+        description: Value must be one of m1.tiny, m1.small or m1.medium.
+
+  # NETWORK
+  public_network:
+    type: string
+    description: public network name to connect to router
+    default: public
+  app_net_name:
+    type: string
+    description: network name
+    default: net-morse
+  app_net_gateway_ip:
+    type: string
+    description: IP address used to connect to router
+    default: 192.168.0.254
+  app_net_start:
+    type: string
+    description: allocation starts from this ip
+    default: 192.168.0.101
+  app_net_end:
+    type: string
+    description: allocation ends with this ip
+    default: 192.168.0.200
+  app_net_cidr:
+    type: string
+    description: allocation cidr for net1
+    default: 192.168.0.0/24
+
+
+resources:
+  app_network:
+    type: lib/create_network.yaml
+    properties:
+      network_name: {get_param: app_net_name}
+      public_network: { get_param: public_network }
+      gateway_ip: { get_param: app_net_gateway_ip }
+      allocation_start: { get_param: app_net_start }
+      allocation_end: { get_param: app_net_end }
+      cidr: { get_param: app_net_cidr }
+
+  app_security_group:
+    type: lib/create_security_group.yaml
+
+  instance_port:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_attr: [app_network, app_network_ID] }
+      security_groups:
+        # - { get_resource: app_security_group }
+        - { get_attr: [app_security_group, app_security_group_ID] }
+      fixed_ips:
+        - subnet_id: { get_attr: [app_network, app_subnet_ID] }
+
+  boot_script:
+    type: OS::Heat::SoftwareConfig
+    properties:
+      group: script
+      config:
+        get_file: initial_config.sh
+
+  morse_server:
+    type: OS::Nova::Server
+    properties:
+      key_name: { get_param: key_name }
+      image: { get_param: image_id }
+      flavor: { get_param: flavor }
+      networks:
+        - port: { get_resource: instance_port }
+      user_data_format: SOFTWARE_CONFIG
+      user_data: { get_resource: boot_script }
+
+  # deployment:
+  #   type: OS::Heat::SoftwareDeployment
+  #   properties:
+  #     config:
+  #       get_resource: boot_script
+  #     server:
+  #       get_resource: morse_server
+  #     actions:
+  #     - CREATE
+
+  floating_IP:
+    type: OS::Neutron::FloatingIP
+    properties:
+      floating_network: { get_param : public_network }
+
+  association:
+    type: OS::Neutron::FloatingIPAssociation
+    properties:
+      floatingip_id: { get_resource: floating_IP }
+      port_id: { get_resource: instance_port }
+      # port_id: {get_attr: [morse_server, addresses, {get_resource: private_network}, 0, port]}
+
+outputs:
+  private_ip:
+    description: The private IP address of the deployed instance
+    value: { get_attr: [morse_server, first_address] }
+  public_ip:
+    description: Public IP address of the deployed instance
+    value: { get_attr: [ floating_IP, floating_ip_address ] }

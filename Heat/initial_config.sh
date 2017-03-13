@@ -7,6 +7,5 @@ echo "user_data initiated"
 # sudo apt -y install git
 # git clone https://github.com/AlvaroRuizDelgado/Morse.git
 # cd Morse/ServerConfig
-# . install_single_node.sh
-# . run_flask
+# . install_mogi.sh
 echo "user_data finished"

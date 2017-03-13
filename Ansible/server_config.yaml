@@ -10,66 +10,84 @@
     flask_app: fl_mogi_morse.py
 
   tasks:
-  # - name: Create a test file
-  #   file: path=test_file state=touch
-  #   tags: debug
+    # - name: Create a test file
+    #   file: path=test_file state=touch
+    #   tags: debug
 
-  - name: Update the system
-    apt: update_cache=yes
-    when: ansible_os_family == "Debian"
-    become: true
-    tags: update
-  # - name: Upgrade the distribution
-  #   apt: upgrade=dist
-  #   when: ansible_os_family == "Debian"
-  #   become: true
-  #   tags: update
+    - name: Update the system
+      apt: update_cache=yes
+      when: ansible_os_family == "Debian"
+      become: true
+      tags: update
+    # - name: Upgrade the distribution
+    #   apt: upgrade=dist
+    #   when: ansible_os_family == "Debian"
+    #   become: true
+    #   tags: update
 
-  - name: Install git
-    package:
-      name: git
-      state: latest
-    become: true
-    tags: git
-  - name: Check if the git directory exists
-    stat: path={{ webapp_dir }}/{{ webapp_name }}
-    register: check_git_path
-    tags: git
-  - name: Clone the data if it doesn't exist
-    git:
-      repo: "{{ repo_url }}"
-      dest: "{{ webapp_dir }}/{{ webapp_name }}"
-      version: "{{ repo_branch }}"
-    when: check_git_path.stat.exists == false
-    tags: git
-  - name: Update the data if it exists
-    git:
-      repo: "{{ repo_url }}"
-      dest: "{{ webapp_dir }}/{{ webapp_name }}"
-      version: "{{ repo_branch }}"
-      clone: no
-    when: check_git_path.stat.exists
-    tags: git
+    - name: Install git
+      package:
+        name: git
+        state: latest
+      become: true
+      tags: git
+    - name: Check if the git directory exists
+      stat: path={{ webapp_dir }}/{{ webapp_name }}
+      register: check_git_path
+      tags: git
+    - name: Clone the data if it doesn't exist
+      git:
+        repo: "{{ repo_url }}"
+        dest: "{{ webapp_dir }}/{{ webapp_name }}"
+        version: "{{ repo_branch }}"
+      when: check_git_path.stat.exists == false
+      tags: git
+    - name: Update the data if it exists
+      git:
+        repo: "{{ repo_url }}"
+        dest: "{{ webapp_dir }}/{{ webapp_name }}"
+        version: "{{ repo_branch }}"
+        clone: no
+      when: check_git_path.stat.exists
+      tags: git
 
-  - name: Install virtualenv.
-    package:
-      name: python-virtualenv
-      state: latest
-    become: true
-    tags: flask
-  - name: Virtual environment and install requirements.
-    pip:
-      name: Flask
-      state: latest
-      # requirements: "{{ webapp_dir }}/{{ webapp_name }}/requirements.txt"
-      virtualenv: "{{ webapp_dir }}/{{ webapp_name }}/{{ webapp_cfg }}/{{ venv }}/"
-      # virtualenv_python: python2.7
-    tags: flask
-  - name: Run flask
-    shell:
-      nohup {{ venv }}/bin/flask run --host=0.0.0.0 > flask.log 2>&1 &
-    environment:
-      FLASK_APP: "{{ flask_app }}"
-    args:
-      chdir: "{{ webapp_dir }}/{{ webapp_name }}/{{ webapp_cfg }}/"
-    tags: flask
+    - name: Install virtualenv.
+      package:
+        name: python-virtualenv
+        state: latest
+      become: true
+      tags: flask
+    - name: Virtual environment and install requirements.
+      pip:
+        name: Flask
+        state: latest
+        # requirements: "{{ webapp_dir }}/{{ webapp_name }}/requirements.txt"
+        virtualenv: "{{ webapp_dir }}/{{ webapp_name }}/{{ webapp_cfg }}/{{ venv }}/"
+        # virtualenv_python: python2.7
+      tags: flask
+    - name: Kill existing {{webapp_name}} flask processes
+      shell: kill $(ps aux | awk '!/awk/ && /{{webapp_name}}/ { print $2 }' )
+      ignore_errors: yes
+      tags: flask
+    # - name: Ensure that {{ webapp_name }} is not already running.
+    #   shell: ps aux | awk '!/awk/ && /{{webapp_name}}/'
+    #   # changed_when: false
+    #   register: flask_process_status
+    #   changed_when: flask_process_status.stdout != ""
+    #   notify: "stop flask"
+    # - name: "Kill existing {{webapp_name}} processes"
+    #   notify: "stop flask"
+    #   when: flask_process_status.rc != 0
+    - name: Run flask
+      shell:
+        nohup {{ venv }}/bin/flask run --host=0.0.0.0 > flask.log 2>&1 &
+      environment:
+        FLASK_APP: "{{ flask_app }}"
+      args:
+        chdir: "{{ webapp_dir }}/{{ webapp_name }}/{{ webapp_cfg }}/"
+      tags: flask
+
+  # handlers:
+  #   - name: Kill existing {{webapp_name}} flask processes
+  #     shell: kill $(ps aux | awk '!/awk/ && /{{webapp_name}}/ { print $2 }' )
+  #     listen: "stop flask"

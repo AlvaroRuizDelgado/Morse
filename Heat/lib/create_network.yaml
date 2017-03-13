@@ -1,0 +1,78 @@
+heat_template_version: 2015-04-30
+description: Network, subnet and router (connected to the public NW) for the app.
+
+parameters:
+  network_name:
+    type: string
+    description: a name for this network
+  public_network:
+    type: string
+    description: a public network to connect router
+    default: public
+  gateway_ip:
+    type: string
+    description: ip address used to connect to Router
+    default: 129.168.0.254
+  allocation_start:
+    type: string
+    description: start of allocation pool
+    default: 192.168.0.10
+  allocation_end:
+    type: string
+    description: end of allocation pool
+    default: 192.168.0.200
+  cidr:
+    type: string
+    description: cidr of network
+    default: 192.168.0.0/24
+
+resources:
+  app_network:
+    type: OS::Neutron::Net
+    properties:
+      name: { get_param: network_name }
+
+  app_subnet:
+    type: OS::Neutron::Subnet
+    properties:
+      name:
+        str_replace:
+          template: sub_NWNAME
+          params:
+            NWNAME: { get_param: network_name }
+      network: { get_resource: app_network }
+      allocation_pools: [{"start": { get_param: allocation_start }, "end": { get_param: allocation_end },}]
+      cidr: { get_param: cidr }
+      dns_nameservers: [ "8.8.8.8", "8.8.4.4" ]
+      enable_dhcp: True
+      ip_version: 4
+      gateway_ip: { get_param: gateway_ip }
+
+  app_router:
+    type: OS::Neutron::Router
+    properties:
+      external_gateway_info:
+            network: { get_param: public_network }
+
+  app_router_interface:
+    type: OS::Neutron::RouterInterface
+    properties:
+      router_id: { get_resource: app_router }
+      subnet_id: { get_resource: app_subnet }
+
+outputs:
+  app_network_ID:
+    description: ID of the network
+    value: { get_resource: app_network }
+  app_network_name:
+    description: name of network
+    value: { get_attr: [app_network, name] }
+  app_subnet_ID:
+    description: ID of subnet
+    value: { get_resource: app_subnet }
+  app_subnet_name:
+    description: name of subnet
+    value: { get_attr: [app_subnet, name] }
+  app_router_ID:
+    description: ID of router
+    value: { get_resource: app_router }
