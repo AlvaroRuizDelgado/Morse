@@ -105,7 +105,7 @@ heat stack-create -f test.yaml heat-test
 
 ## Database creation.
 
-Load the morse.csv file into MariaDB.
+Load the morse.csv file into MariaDB. As the character ',' is a character used in the database, I changed the commas in the .csv to dollar signs (which are not standardized, and therefore not to be used by me).
 ```bash
 sudo apt-get install -y mariadb-server
 mysql -u root -p

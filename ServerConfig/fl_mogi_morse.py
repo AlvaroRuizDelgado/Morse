@@ -6,7 +6,7 @@ app = Flask(__name__)
 @app.route('/')
 def index():
     morse_dict = {"a":"o-", "b":"-ooo", "c":"-o-o"}
-    original = "alvaro"
+    original = "Welcome!"
 
     output = "String to convert:  {o}  --->  ".format(o=original)
     for character in original:
@@ -36,4 +36,4 @@ def about():
     return send_file(about_file, mimetype='text/markdown')
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0')
+    app.run(host='0.0.0.0',port=5000)

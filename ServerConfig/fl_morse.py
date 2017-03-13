@@ -19,7 +19,7 @@ def get_morse(original):
     input = original.upper()
     for character in input:
         if character in morse_dict:
-            output += morse_dict[character]
+            output += morse_dict[character] + " "
         else:
             output += character
 
@@ -45,7 +45,7 @@ def get_morse_dict(original):
 
 @app.route('/')
 def index():
-    original = "Welcome!"
+    original = "Welcome! You can input your text directly in the address bar (/text)."
     return get_morse(original)
 
 @app.route('/<string:original>')
@@ -63,4 +63,4 @@ def internal_server_error(error):
     return unicode_explanation
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0')
+    app.run(host='0.0.0.0',port=5000)

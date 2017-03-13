@@ -82,6 +82,14 @@
   - [ ] SSH multiplexing through ControlMaster. It seems though that it may not be a good idea, as killing the parent ssh connection could take down the whole thing. Should I use it?
   - [ ] I would like a less clunky way to reload the config file, without having to restart the terminal.
 
+- [ ] MariaDB
+  - [x] Finding the right connector for flask was a bit tricky. In the end the only package needed is flask-mysql, but it needs to install fully (--upgrade option can help).
+  - [ ] Not happy with how I'm passing the .csv file to the database, there must be a better way to deal with the presence of ',' as a character in the list. I would like a way to tell MariaDB to take the first character for the first field.
+
+- [ ] Flask
+  - [ ] Add a way to handle the error if a character is not found in the database.
+  - [ ] I should implement it in a more serious way, with the folder structure and stuff.
+
 $$
 x = 3
 $$
