@@ -1,4 +1,4 @@
-#!/usr/bin/python 
+#!/usr/bin/python
 
 # ERROR: mysql.connector not recognized.
 # import MySQL.Connector as mariadb
@@ -9,13 +9,16 @@ import MySQLdb, sys
 
 # Check that the input arguments are valid.
 if len(sys.argv) != 2:
-    print "Please input exactly one string.\ne.g.: mogi_morse.py Test"
+    print "Please input exactly one string.\ne.g.: ./python_DB_test3_set.py Test"
     exit()
 
 input = sys.argv[1]
 
 # Opening a connection to the database.
-db = MySQLdb.connect(host="localhost", user="morse", passwd="morse", db="morse")
+print "Connecting..."
+db_location = "localhost"
+db = MySQLdb.connect(host=db_location, user="morse", passwd="morse", db="morse")
+print "Connected."
 
 # create a cursor for the select
 cur = db.cursor()
@@ -44,7 +47,7 @@ output = ""
 for character in inputUpper:
 #    print "{x}".format(x=character)
     if character in morse:
-        output += morse[character]
+        output += morse[character] + " "
     else:
         output += character
 

@@ -182,12 +182,19 @@ CREATE TABLE morse (
 LOAD DATA LOCAL INFILE "morse.csv" INTO TABLE morse.morse FIELDS TERMINATED BY '$' LINES TERMINATED BY '\n';
 ```
 
-Installing the mariadb-server through a script instead is a bit tricky, as it would usually ask for the root password. To avoid that we create a non-interactive environment variable to create it without a password, and assign it a password afterwards. In addition, we can put all the sql code into a .sql file and give it to mysql.
+If, instead, we want to install mariadb-server through a script, it gets a bit tricky, as it would usually ask for the root password. To avoid that we create a non-interactive environment variable to create it without a password, and we assign it a password afterwards. In addition, we can put all the sql code into a .sql file and give it to mysql.
 ```bash
 cat <<_EOF_ > install_db.sh
-inventory = hosts
-# uncomment this to disable SSH key host checking
-host_key_checking = False
+#!/bin/bash
+
+db_password=morse
+
+export DEBIAN_FRONTEND=noninteractive
+sudo -E apt-get -q -y install mariadb-server
+unset DEBIAN_FRONTEND
+mysqladmin -u root password $db_password
+
+cat morse_db.sql | mysql -u root -p$db_password
 _EOF_
 ```
 
@@ -196,4 +203,10 @@ Then we need to install the python connectors for MariaDB.
 . venv/bin/activate
 sudo apt-get install python-mysqldb
 pip install Flask-MySQLdb
+```
+
+In order to enable remote access we need to comment out the option "bind-address" in the configuration file (/etc/mysql/my.cnf).
+```bash
+sudo sed -i 's/bind-address\t/#bind-address\t/' /etc/mysql/my.cnf
+sudo service mysql restart
 ```
