@@ -1,4 +1,5 @@
 . venv/bin/activate
+pip install flask-mysql
 # DEBUG enables automatic reloader
 export FLASK_DEBUG=1
 export FLASK_APP=fl_morse.py

@@ -30,8 +30,9 @@
 
 ## Miscellaneous stuff
 
-- [x] Security group
+- [ ] Security group
   - [x] I had a problem with the security group, I wasn't letting servers access each other (TCP 5000 wasn't allowed).
+  - [ ] I'm not sure how to reload the nodes after making changes to the security group. They seem to keep using the old settings. Surely destroying it all and recreating is not a proper solution...
 
 - [ ] Flask
   - [ ] Check the run.py executable, I'm confused about the naming conventions.
@@ -77,7 +78,7 @@
     - Configure apache2 with virtual addresses.
     - SSH port redirection --> just add LocalForward in the .ssh/config file.
     - [x] I ended up creating an SSH bastion to access all machines in the server.
-  - [ ] LocalForward stops being active, perhaps after adding variables to the .ssh/config file. I need to reboot to enable the functionality.
+  - [x] LocalForward stops being active, perhaps after adding variables to the .ssh/config file. I need to reboot to enable the functionality.
     - Whenever I connect through ssh to a server I receive an error message:
     ```bash
     bind: Address already in use
@@ -85,11 +86,13 @@
     ```
     - Is it because of screen keeping ssh connections in the background?
     - I think it's related to the bastion setup. The localforward rule may try to re-route to those addresses, then the bastion captures them and changes the port to 6080.
+      - As the config file is read sequentially, all the LocalForward directives related to the bastion network have to be located before the bastion setup.
+      - This works for those LocalForward, but changing those fields later on to address freshly created nodes, or adding extra ones, doesn't work, as those addresses are already assigned to the bastion proxy.
   - [x] SSH bastion setup for Ansible.
   - [ ] SSH multiplexing through ControlMaster. It seems though that it may not be a good idea, as killing the parent ssh connection could take down the whole thing. Should I use it?
   - [ ] I would like a less clunky way to reload the config file, without having to restart the terminal.
 
-- [ ] Test automation
+- [ ] Test automation --> Jenkins
   - [x] My manual main test consists on running "curl IP:5000" and see that it works.
 
 - [ ] MariaDB

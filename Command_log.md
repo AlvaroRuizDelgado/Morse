@@ -198,15 +198,21 @@ cat morse_db.sql | mysql -u root -p$db_password
 _EOF_
 ```
 
-Then we need to install the python connectors for MariaDB.
-```bash
-. venv/bin/activate
-sudo apt-get install python-mysqldb
-pip install Flask-MySQLdb
-```
-
 In order to enable remote access we need to comment out the option "bind-address" in the configuration file (/etc/mysql/my.cnf).
 ```bash
 sudo sed -i 's/bind-address\t/#bind-address\t/' /etc/mysql/my.cnf
 sudo service mysql restart
+```
+
+In the nodes that run the flask server we need to install the python connectors for MariaDB. Flask-mysql links Flask with MariaDB, while python-mysqldb is needed to connect python scripts to MariaDB.
+```bash
+sudo apt-get install -y python-mysqldb
+. venv/bin/activate
+pip install flask-mysql
+```
+
+Connectivity can be tested through the mariadb-client package.
+```bash
+sudo apt-get -y install mariadb-client
+mysql -u morse -pmorse -h DB_SERVER_IP morse
 ```
