@@ -1,0 +1,115 @@
+heat_template_version: 2015-04-30
+description: Create a webservice from the ground up.
+
+parameters:
+  name:
+    type: string
+    description: name of VM
+    default: node
+  group_name:
+    type: string
+    description: group name set to metadata
+  node_userdata:
+    type: string
+    description: initial configuration of the node
+  key_name:
+    type: string
+    label: Key Name
+    description: Name of key-pair to be used for compute instance
+  node_image:
+    type: string
+    description: Image to be used for compute instance
+    default: Ubuntu14.04_LTS
+  flavor:
+    type: string
+    description: Type of instance (flavor) to be used
+    default: m1.tiny
+  # NETWORK
+  public_network:
+    type: string
+    description: a public network name to connect to router
+    default: public
+  node_network:
+    type: string
+    description: network name
+    default: net-morse
+  node_subnet_id:
+    type: string
+    description: id of subnetwork
+  node_security_group:
+    type: string
+    description: security group to assign
+  # # LBaaS settings
+  # pool:
+  #   type: string
+  #   description: name of LB Pool
+  # app_port:
+  #   type: number
+  #   description: port used by servers
+  #   default: 80
+
+resources:
+  node:
+    type: OS::Nova::Server
+    properties:
+      key_name: { get_param: key_name }
+      image: { get_param: node_image }
+      flavor: { get_param: flavor }
+      metadata:
+        group: { get_param: group_name }
+      networks:
+        - port: { get_resource: node_port }
+      user_data_format: SOFTWARE_CONFIG
+      user_data: { get_resource: boot_script }
+
+  node_port:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_param: node_network }
+      fixed_ips:
+        - subnet_id: { get_param: node_subnet_id }
+      security_groups:
+        - { get_param: node_security_group }
+
+  floating_IP:
+    type: OS::Neutron::FloatingIP
+    properties:
+      floating_network: { get_param : public_network }
+
+  floating_IP_association:
+    type: OS::Neutron::FloatingIPAssociation
+    properties:
+      floatingip_id: { get_resource: floating_IP }
+      port_id: { get_resource: node_port }
+      # port_id: {get_attr: [morse_server, addresses, {get_resource: private_network}, 0, port]}
+
+  boot_script:
+    type: OS::Heat::SoftwareConfig
+    properties:
+      group: script
+      config: { get_param: node_userdata }
+        # get_file: initial_config.sh
+
+  # deployment:
+  #   type: OS::Heat::SoftwareDeployment
+  #   properties:
+  #     config:
+  #       get_resource: boot_script
+  #     server:
+  #       get_resource: morse_server
+  #     actions:
+  #     - CREATE
+
+outputs:
+  node_name:
+    description: name of created node.
+    value: { get_attr: [ node, name ] }
+  node_private_IP:
+    description: IP address of the server in the private network
+    value: { get_attr: [ node, first_address ] }
+  node_networks:
+    description: networks
+    value: { get_attr: [ node, networks ]}
+  node_floating_IP:
+    description: floating IP assigned to the node
+    value: { get_attr: [ floating_IP, floating_ip_address ] }

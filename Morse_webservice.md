@@ -19,7 +19,7 @@
       Needs text field and trigger button.
 - [x] Take it down, re-create it.
 - [x] Re-create it through HEAT.
-- [x] Configure it through Ansible
+- [x] Configure it through Ansible.
 - [ ] Connect HEAT and Ansible.
 - [ ] Add second web-server and load balancer.
 - [ ] Provision database node.
@@ -46,7 +46,8 @@
   ```
     - [x] Closing and opening the terminal application solves the issue, as it loads the .ssh/config file.
   - [ ] Dynamic inventory to hook Ansible.
-  - [ ] Separate the modules in different files (type: folder/file.yaml).
+  - [x] Separate the modules in different files (type: lib/file.yaml).
+  - [ ] I'm using an existing key, I should use one prepared in advance in a different folder.
 
 - [ ] Ansible
   - [ ] Configuration through Ansible.
@@ -65,6 +66,9 @@
     - [ ] The best option is to make it a service and use the "service" module.
   - [ ] Openstack.py to retrieve the IPs of the instances created by Heat and add them to hosts. How to continue to Ansible from Heat?
   - [ ] Separate the modules in different files (or folders in this case).
+
+- [ ] LBaaS
+  - [ ] LBaaS v2 not currently installed in our openstack. Even though it was only experimental in Kilo (our version), it seems that the core functions were mostly the same.
 
 - [ ] SSH
   - [x] I wasn't sure how to access the server I created in the OpenStack machine. The options I saw are listed below (note that none would allow for icmp to work). In the end SSH port redirection is the easiest and the one that has the least impact.

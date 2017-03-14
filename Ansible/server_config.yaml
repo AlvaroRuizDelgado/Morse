@@ -65,10 +65,7 @@
         virtualenv: "{{ webapp_dir }}/{{ webapp_name }}/{{ webapp_cfg }}/{{ venv }}/"
         # virtualenv_python: python2.7
       tags: flask
-    - name: Kill existing {{webapp_name}} flask processes
-      shell: kill $(ps aux | awk '!/awk/ && /{{webapp_name}}/ { print $2 }' )
-      ignore_errors: yes
-      tags: flask
+
     # - name: Ensure that {{ webapp_name }} is not already running.
     #   shell: ps aux | awk '!/awk/ && /{{webapp_name}}/'
     #   # changed_when: false
@@ -78,6 +75,12 @@
     # - name: "Kill existing {{webapp_name}} processes"
     #   notify: "stop flask"
     #   when: flask_process_status.rc != 0
+    
+    - name: Kill existing {{webapp_name}} flask processes
+      shell: kill $(ps aux | awk '!/awk/ && /{{webapp_name}}/ { print $2 }' )
+      ignore_errors: yes
+      tags: flask
+
     - name: Run flask
       shell:
         nohup {{ venv }}/bin/flask run --host=0.0.0.0 > flask.log 2>&1 &
