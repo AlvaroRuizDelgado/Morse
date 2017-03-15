@@ -15,9 +15,9 @@
 
 # I should change the whole thing into ansible commands.
 - name: Configure the database
-  shell: cat {{database_creation_sql}} | mysql -u root -p{{mysql_root_password}}
-  args:
-    chdir: "{{ webapp_dir }}/{{ webapp_name }}/{{ webapp_cfg }}/"
+  shell: cat morse_db.sql | mysql -u root -p{{mysql_root_password}}
+  # args:
+  #   chdir: "{{ webapp_dir }}/{{ webapp_name }}/{{ webapp_cfg }}/"
   ignore_errors: yes
   tags: database_creation
 

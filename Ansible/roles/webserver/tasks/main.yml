@@ -2,7 +2,7 @@
 # tasks file for webservers
 - name: Setting the IP address of the dbserver
   set_fact:
-    remote_dbserver: hostvars[inventory_hostname]['ansible_default_ipv4']['address']
+    remote_dbserver: hostvars[inventory_hostname]['groups']['dbservers'][0]
 
 - name: Install virtualenv and python-MySQL hook.
   apt: pkg={{ item }} state=latest
@@ -40,8 +40,9 @@
   tags: flask
 
 - name: Run flask
-  shell:
-    nohup ./{{ flask_app }} > flask.log 2>&1 &
+  shell: |
+    . {{venv}}/bin/activate
+    nohup ./{{flask_app}} {{remote_dbserver}} > flask.log 2>&1 &
     # nohup {{ venv }}/bin/flask run --host=0.0.0.0 > flask.log 2>&1 &
   environment:
     FLASK_APP: "{{ flask_app }}"
