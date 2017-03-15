@@ -1,0 +1,4 @@
+---
+# defaults file for webservers
+venv: venv
+flask_app: fl_morse.py

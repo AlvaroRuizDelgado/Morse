@@ -20,12 +20,12 @@
 - [x] Take it down, re-create it.
 - [x] Re-create it through HEAT.
 - [x] Configure it through Ansible.
-- [ ] Connect HEAT and Ansible.
-- [ ] Add second web-server and load balancer.
-- [ ] Provision database node.
-- [x] Modify the flask app to use the database.
-      I can make a list of characters, grab only those from the database, and map them to a dictionary.
-- [ ] Add a Jenkins based test to check that the result can be decoded into the original text.
+- [x] Modularize the HEAT templates and provision a variable number of nodes.
+- [x] Modify the flask app to use a database in a dedicated node.
+- [ ] Provision database node through HEAT/Ansible.
+- [ ] Connect HEAT and Ansible (same machine).
+- [ ] Load balancer for the extra web servers.
+- [ ] Jenkins based test to check that the result can be decoded into the original text.
 - [ ] FFS: docker, GitLab, Gerrit
 
 ## Miscellaneous stuff

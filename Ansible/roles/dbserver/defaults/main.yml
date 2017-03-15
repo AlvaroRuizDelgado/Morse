@@ -1,0 +1,4 @@
+---
+# defaults file for database
+mysql_root_password: secpwd
+database_creation_sql: morse_db.sql

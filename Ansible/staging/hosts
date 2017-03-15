@@ -7,13 +7,17 @@ openstack
 [openstack_controller:vars]
 ansible_ssh_private_key_file = ~/.ssh/id_rsa
 
-[morse]
-192.168.100.189
-192.168.100.188
+[webservers]
+192.168.100.206
+192.168.100.207
 
-[morse:vars]
+[dbservers]
+192.168.100.205
+
+[morse_service:vars]
 ansible_ssh_user = ubuntu
 ansible_ssh_private_key_file = ~/.ssh/openstack_rsa
 
-[openstack_vms:children]
-morse
+[morse_service:children]
+webservers
+dbservers

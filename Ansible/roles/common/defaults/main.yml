@@ -1,0 +1,7 @@
+---
+# defaults file for common
+repo_url: https://github.com/AlvaroRuizDelgado/Morse.git
+repo_branch: master
+webapp_dir: /home/ubuntu
+webapp_name: Morse
+webapp_cfg: ServerConfig

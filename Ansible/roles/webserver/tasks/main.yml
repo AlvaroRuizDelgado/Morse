@@ -1,0 +1,55 @@
+---
+# tasks file for webservers
+- name: Setting the IP address of the dbserver
+  set_fact:
+    remote_dbserver: hostvars[inventory_hostname]['ansible_default_ipv4']['address']
+
+- name: Install virtualenv and python-MySQL hook.
+  apt: pkg={{ item }} state=latest
+  become: true
+  with_items:
+    - python-virtualenv
+    - python-mysqldb
+  tags: flask
+
+- name: Virtual environment and install requirements.
+  pip:
+    name: "{{ item }}"
+    state: latest
+    # requirements: "{{ webapp_dir }}/{{ webapp_name }}/requirements.txt"
+    virtualenv: "{{ webapp_dir }}/{{ webapp_name }}/{{ webapp_cfg }}/{{ venv }}/"
+    # virtualenv_python: python2.7
+  with_items:
+    - Flask
+    - flask-mysql
+  tags: flask
+
+# - name: Ensure that {{ webapp_name }} is not already running.
+#   shell: ps aux | awk '!/awk/ && /{{webapp_name}}/'
+#   # changed_when: false
+#   register: flask_process_status
+#   changed_when: flask_process_status.stdout != ""
+#   notify: "stop flask"
+# - name: "Kill existing {{webapp_name}} processes"
+#   notify: "stop flask"
+#   when: flask_process_status.rc != 0
+
+- name: Kill existing {{webapp_name}} flask processes
+  shell: kill $(ps aux | awk '!/awk/ && /{{webapp_name}}/ { print $2 }' )
+  ignore_errors: yes
+  tags: flask
+
+- name: Run flask
+  shell:
+    nohup ./{{ flask_app }} > flask.log 2>&1 &
+    # nohup {{ venv }}/bin/flask run --host=0.0.0.0 > flask.log 2>&1 &
+  environment:
+    FLASK_APP: "{{ flask_app }}"
+  args:
+    chdir: "{{ webapp_dir }}/{{ webapp_name }}/{{ webapp_cfg }}/"
+  tags: flask
+
+# handlers:
+#   - name: Kill existing {{webapp_name}} flask processes
+#     shell: kill $(ps aux | awk '!/awk/ && /{{webapp_name}}/ { print $2 }' )
+#     listen: "stop flask"

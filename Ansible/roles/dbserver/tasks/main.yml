@@ -1,0 +1,40 @@
+---
+# tasks file for database
+# Setup/install tasks.
+
+# - include: setup-RedHat.yml
+#   when: ansible_os_family == 'RedHat'
+#   static: no
+#
+# - include: setup-Debian.yml
+#   when: ansible_os_family == 'Debian'
+#   static: no
+
+
+- include: secure_mysql_installation.yml
+
+# I should change the whole thing into ansible commands.
+- name: Configure the database
+  shell: cat {{database_creation_sql}} | mysql -u root -p{{mysql_root_password}}
+  args:
+    chdir: "{{ webapp_dir }}/{{ webapp_name }}/{{ webapp_cfg }}/"
+  ignore_errors: yes
+  tags: database_creation
+
+
+
+# db_password=morse
+# export DEBIAN_FRONTEND=noninteractive
+# sudo -E apt-get -q -y install mariadb-server
+# unset DEBIAN_FRONTEND
+# mysqladmin -u root password $db_password
+
+
+# cat morse_db.sql | mysql -u root -p$db_password
+
+
+# sudo sed -i 's/bind-address\t/#bind-address\t/' /etc/mysql/my.cnf
+
+
+
+# sudo service mysql restart

@@ -120,7 +120,7 @@ pip install ansible
 ```
 
 Create an "ansible.cfg" file in the folder where the playbooks are going to be, and edit it to:
-- Make ansible check for the hosts file in the same folder.
+- Make ansible check for the hosts file in the same folder. Alternatively, we can pass the path to hosts as a variable (ansible-playbook -i path/to/hosts playbook.yaml).
 - Disable host key checks, which require manual input and would slow down the whole process.
 
 ```bash
@@ -158,10 +158,19 @@ ProxyCommand ssh -q -W %h:%p openstack
 
 Once that is done, we can retrieve the IP addresses of the servers by running "openstack server list", and add them under [morse] in the hosts file. Then we can run an ansible playbook to configure all the servers listed there:
 ```bash
-ansible-playbook server_config.yaml
+ansible-playbook server_config.yml
 ```
 
 It's also possible to have ansible automatically retrieve the IPs from openstack through an oficially endorsed file called "openstack.py". However, I think that in order to do this we need to call ansible from the OpenStack controller.
+
+##### Pretty-fying ansible
+
+We can follow the regular organization for Ansible, dividing everything into roles. Ansible comes with an easy way to create the directory structure of a role. For example, to create the common role, in the roles directory, we can type:
+```bash
+ansible-galaxy init common
+```
+
+
 
 ## Database creation.
 

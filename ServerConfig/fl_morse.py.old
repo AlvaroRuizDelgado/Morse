@@ -3,15 +3,13 @@
 from flask import Flask, send_file
 #from flask_mysqldb import MySQL
 from flaskext.mysql import MySQL
-import sys
 
 app = Flask(__name__)
 mysql = MySQL(app)
-db_address = sys.argv[1]
 app.config['MYSQL_DATABASE_USER'] = 'morse'
 app.config['MYSQL_DATABASE_PASSWORD'] = 'morse'
 app.config['MYSQL_DATABASE_DB'] = 'morse'
-app.config['MYSQL_DATABASE_HOST'] = db_address
+app.config['MYSQL_DATABASE_HOST'] = 'localhost'
 mysql.init_app(app)
 
 def get_morse(original):

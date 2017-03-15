@@ -1,5 +1,6 @@
 ---
-- hosts: morse
+- name: Webserver configuration
+  hosts: webservers
   vars:
     repo_url: https://github.com/AlvaroRuizDelgado/Morse.git
     repo_branch: master
@@ -75,7 +76,7 @@
     # - name: "Kill existing {{webapp_name}} processes"
     #   notify: "stop flask"
     #   when: flask_process_status.rc != 0
-    
+
     - name: Kill existing {{webapp_name}} flask processes
       shell: kill $(ps aux | awk '!/awk/ && /{{webapp_name}}/ { print $2 }' )
       ignore_errors: yes

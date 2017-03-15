@@ -1,0 +1,44 @@
+---
+# tasks file for common
+
+# - name: Create a test file
+#   file: path=test_file state=touch
+#   tags: debug
+
+- name: Update the system
+  apt: update_cache=yes
+  when: ansible_os_family == "Debian"
+  become: true
+  tags: update
+# - name: Upgrade the distribution
+#   apt: upgrade=dist
+#   when: ansible_os_family == "Debian"
+#   become: true
+#   tags: update
+
+- name: Install git
+  package:
+    name: git
+    state: latest
+  become: true
+  tags: git
+- name: Check if the git directory exists
+  stat: path={{ webapp_dir }}/{{ webapp_name }}
+  register: check_git_path
+  tags: git
+- name: Clone the data if it doesn't exist
+  git:
+    repo: "{{ repo_url }}"
+    dest: "{{ webapp_dir }}/{{ webapp_name }}"
+    version: "{{ repo_branch }}"
+  when: check_git_path.stat.exists == false
+  tags: git
+- name: Update the data if it exists
+  git:
+    repo: "{{ repo_url }}"
+    dest: "{{ webapp_dir }}/{{ webapp_name }}"
+    version: "{{ repo_branch }}"
+    clone: no
+  when: check_git_path.stat.exists
+  ignore_errors: yes
+  tags: git

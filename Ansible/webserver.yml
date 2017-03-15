@@ -1,0 +1,9 @@
+---
+# - hosts: webservers
+#   gather_facts: yes
+
+- name: Webserver configuration
+  hosts: webservers
+  roles:
+    - common
+    - webserver
