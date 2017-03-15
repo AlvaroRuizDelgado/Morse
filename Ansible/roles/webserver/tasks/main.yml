@@ -2,7 +2,8 @@
 # tasks file for webservers
 - name: Setting the IP address of the dbserver
   set_fact:
-    remote_dbserver: hostvars[inventory_hostname]['groups']['dbservers'][0]
+    remote_dbserver: "{{ hostvars[groups['dbservers'][0]].inventory_hostname }}"
+    # remote_dbserver: hostvars[inventory_hostname]['groups']['dbservers'][0]
 
 - name: Install virtualenv and python-MySQL hook.
   apt: pkg={{ item }} state=latest
