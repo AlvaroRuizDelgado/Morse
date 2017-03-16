@@ -15,15 +15,15 @@
         - [x] Hello world example
     - [x] Put it in an Openstack node and access it.
     - [x] Git integration
-- [x] Update the program in the Flask Framework
-      Needs text field and trigger button.
+- [x] Implement the program in the Flask Framework
 - [x] Take it down, re-create it.
 - [x] Re-create it through HEAT.
 - [x] Configure it through Ansible.
-- [x] Modularize the HEAT templates and provision a variable number of nodes.
+  - [x] SSH bastion --> new LocalForward may not work after initialization.
+- [x] Modularize HEAT templates, provision a variable number of nodes.
 - [x] Modify the flask app to use a database in a dedicated node.
-- [ ] Provision database node through HEAT/Ansible.
-- [ ] Connect HEAT and Ansible (same machine).
+- [x] Provision database node through HEAT/Ansible.
+- [ ] Connect HEAT and Ansible (Ansible from controller node).
 - [ ] Load balancer for the extra web servers.
 - [ ] Jenkins based test to check that the result can be decoded into the original text.
 - [ ] FFS: docker, GitLab, Gerrit
@@ -37,6 +37,8 @@
 - [ ] Flask
   - [ ] Check the run.py executable, I'm confused about the naming conventions.
   - [ ] How to make a browser read the MD stuff?
+  - [ ] Put it all in a proper Flask folder structure.
+  - [ ] Add a way to handle the error if a character is not found in the database.
 
 - [ ] Heat:
   - [x] The user_data is not executed. I found that it is copied into a folder though --> it was executed, but it was in the root folder (I expected it in the user folder).
@@ -49,6 +51,7 @@
   - [ ] Dynamic inventory to hook Ansible.
   - [x] Separate the modules in different files (type: lib/file.yaml).
   - [ ] I'm using an existing key, I should use one prepared in advance in a different folder.
+  - [x] Heat doesn't accept .yml, only .yaml!
 
 - [ ] Ansible
   - [ ] Configuration through Ansible.
@@ -98,10 +101,6 @@
 - [ ] MariaDB
   - [x] Finding the right connector for flask was a bit tricky. In the end the only package needed is flask-mysql, but it needs to install fully (--upgrade option can help).
   - [ ] Not happy with how I'm passing the .csv file to the database, there must be a better way to deal with the presence of ',' as a character in the list. I would like a way to tell MariaDB to take the first character for the first field.
-
-- [ ] Flask
-  - [ ] Add a way to handle the error if a character is not found in the database.
-  - [ ] I should implement it in a more serious way, with the folder structure and stuff.
 
 $$
 x = 3
