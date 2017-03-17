@@ -23,12 +23,12 @@
 - [x] Modularize HEAT templates, provision a variable number of nodes.
 - [x] Modify the flask app to use a database in a dedicated node.
 - [x] Provision database node through HEAT/Ansible.
-- [ ] Connect HEAT and Ansible (Ansible from controller node).
+- [ ] Connect HEAT and Ansible (dynamic inventory, controller node).
 - [ ] Load balancer for the extra web servers.
 - [ ] Jenkins based test to check that the result can be decoded into the original text.
 - [ ] FFS: docker, GitLab, Gerrit
 
-## Miscellaneous stuff
+## Miscellanea
 
 - [ ] Security group
   - [x] I had a problem with the security group, I wasn't letting servers access each other (TCP 5000 wasn't allowed).
@@ -69,7 +69,9 @@
         - [x] I'm killing it if it exists, still can't figure how to check if it's running using shell and a register. If the process is not there, it fails and ends --> ignore_errors: yes.
     - [ ] The best option is to make it a service and use the "service" module.
   - [ ] Openstack.py to retrieve the IPs of the instances created by Heat and add them to hosts. How to continue to Ansible from Heat?
-  - [ ] Separate the modules in different files (or folders in this case).
+    - [ ] I can make a script that joins both together, as long as they are in the controller.
+  - [x] Separate the modules in different files (or folders in this case).
+  - [ ] Do pip install --upgrade setuptools before using pip.
 
 - [ ] LBaaS
   - [ ] LBaaS v2 not currently installed in our openstack. Even though it was only experimental in Kilo (our version), it seems that the core functions were mostly the same.

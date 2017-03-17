@@ -120,19 +120,19 @@ pip install ansible
 ```
 
 Create an "ansible.cfg" file in the folder where the playbooks are going to be, and edit it to:
-- Make ansible check for the hosts file in the same folder. Alternatively, we can pass the path to hosts as a variable (ansible-playbook -i path/to/hosts playbook.yaml).
+- We can add a line (inventory = hosts) to make ansible check for the hosts file in the given folder. Alternatively, we can pass the path to hosts as a variable (ansible-playbook -i path/to/hosts playbook.yaml), which is safer and more compatible with a dynamic inventory.
 - Disable host key checks, which require manual input and would slow down the whole process.
 
 ```bash
 cat <<_EOF_ > ansible.cfg
-inventory = hosts
+[defaults]
 # uncomment this to disable SSH key host checking
 host_key_checking = False
 _EOF_
 ```
 Create the hosts file:
 
-```bash
+```
 [local]
 localhost ansible_connection=local
 
@@ -156,12 +156,42 @@ IdentityFile ~/.ssh/openstack_rsa
 ProxyCommand ssh -q -W %h:%p openstack
 ```
 
-Once that is done, we can retrieve the IP addresses of the servers by running "openstack server list", and add them under [morse] in the hosts file. Then we can run an ansible playbook to configure all the servers listed there:
+We can confirm that these IP addresses are correct through a debug function of ansible that allows to see the resulting hostvars.
 ```bash
-ansible-playbook server_config.yml
+ansible -i staging/hosts webservers -m debug -a "var=hostvars[groups['dbservers'][0]].inventory_hostname"
+```
+
+Once that is done, we can retrieve the IP addresses of the servers by running "openstack server list", and add them under the corresponding group in the hosts file. Then we can run an ansible playbook to configure all the servers listed there:
+```bash
+ansible-playbook site.yml
 ```
 
 It's also possible to have ansible automatically retrieve the IPs from openstack through an oficially endorsed file called "openstack.py". However, I think that in order to do this we need to call ansible from the OpenStack controller.
+
+In order to have that file working we need to install some other python files first.
+```bash
+. venv/bin/activate
+pip install --upgrade setuptools
+pip install ansible
+pip install os-client-config
+pip install shade
+# pip install python-novaclient
+```
+
+The file can be called simply as ./openstack --list, although it's better to filter the (large) output.
+```bash
+# List of openstack servers' addresses
+./openstack.py --list | jq -r '._meta.hostvars[].ansible_ssh_host'
+# List of groups
+./openstack.py --list | jq -r '._meta.hostvars[].openstack.metadata.group'
+```
+
+The way to get the addresses automatically is to create in heat the appropriate groups that are referenced in ansible (webserver_name: default).
+
+
+The file itself can be found here (with interesting examples):
+http://docs.catalystcloud.io/tutorials/ansible-openstack-dynamic-inventory.html
+
 
 ##### Pretty-fying ansible
 
@@ -172,7 +202,7 @@ ansible-galaxy init common
 
 
 
-## Database creation.
+## Database
 
 Load the morse.csv file into MariaDB. As the character ',' is a character used in the database, I changed the commas in the .csv to dollar signs (which are not standardized, and therefore not to be used by me).
 ```bash

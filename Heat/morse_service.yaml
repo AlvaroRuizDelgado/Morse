@@ -6,11 +6,11 @@ parameters:
   webserver_name:
     type: string
     description: group name for webservers
-    default: "morse"
+    default: "webservers"
   webserver_node_count:
     type: number
     description: number of webserver nodes
-    default: 3
+    default: 1
   key_name:
     type: string
     label: Key Name
@@ -29,6 +29,16 @@ parameters:
     constraints:
       - allowed_values: [ m1.tiny, m1.small, m1.medium ]
         description: Value must be one of m1.tiny, m1.small or m1.medium.
+
+  # DBSERVER NODES PARAMETERS
+  dbserver_name:
+    type: string
+    description: group name for webservers
+    default: "dbservers"
+  dbserver_node_count:
+    type: number
+    description: number of webserver nodes
+    default: 1
 
   # NETWORK PARAMETERS
   public_network:
@@ -91,6 +101,31 @@ resources:
             node_network: { get_attr: [app_network, app_network_ID] }
             node_subnet_id: { get_attr: [app_network, app_subnet_ID] }
             group_name: { get_param: webserver_name }
+            node_security_group: { get_attr: [app_security_group, app_security_group_ID] }
+            node_userdata: { get_file: initial_config.sh }
+            # pool: { get_resource: pool }
+            # app_port: { get_param: app_port}
+
+  dbservers:
+    type: OS::Heat::ResourceGroup
+    properties:
+      count: { get_param: dbserver_node_count }
+      # DEFINITION OF EACH INDIVIDUAL NODE
+      resource_def:
+          type: lib/create_node_IP.yaml
+          properties:
+            name:
+              str_replace:
+                template: name%-%index%
+                params:
+                  "name%": { get_param: dbserver_name }
+            public_network: { get_param : public_network }
+            node_image: { get_param: webserver_image }
+            flavor: { get_param: webserver_flavor }
+            key_name: { get_param: key_name }
+            node_network: { get_attr: [app_network, app_network_ID] }
+            node_subnet_id: { get_attr: [app_network, app_subnet_ID] }
+            group_name: { get_param: dbserver_name }
             node_security_group: { get_attr: [app_security_group, app_security_group_ID] }
             node_userdata: { get_file: initial_config.sh }
             # pool: { get_resource: pool }
