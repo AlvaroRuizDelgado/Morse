@@ -1,0 +1,16 @@
+#!/usr/bin/env ansible-playbook
+---
+
+- name: Ping dbservers
+  hosts: dbservers 
+  remote_user: ubuntu
+  tasks:
+    - name: Test connection to instance
+      ping:
+
+- name: Ping webservers
+  hosts: webservers 
+  remote_user: ubuntu
+  tasks:
+    - name: Test connection to instance
+      ping:

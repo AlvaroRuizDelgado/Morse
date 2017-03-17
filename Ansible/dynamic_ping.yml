@@ -1,0 +1,9 @@
+#!/usr/bin/env ansible-playbook
+---
+
+- name: Ping cloud instances
+  hosts: all
+  remote_user: ubuntu
+  tasks:
+    - name: Test connection to instance
+      ping:
