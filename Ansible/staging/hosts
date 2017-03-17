@@ -8,11 +8,11 @@ openstack
 ansible_ssh_private_key_file = ~/.ssh/id_rsa
 
 [webservers]
-192.168.100.211
-192.168.100.210
+192.168.100.204
+192.168.100.205
 
 [dbservers]
-192.168.100.209
+192.168.100.193
 
 [morse_service:vars]
 ansible_ssh_user = ubuntu
