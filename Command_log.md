@@ -186,7 +186,10 @@ The file can be called simply as ./openstack --list, although it's better to fil
 ./openstack.py --list | jq -r '._meta.hostvars[].openstack.metadata.group'
 ```
 
-The way to get the addresses automatically is to create in heat the appropriate groups that are referenced in ansible (webserver_name: default).
+The way to get the addresses automatically is to create in heat the appropriate groups that are referenced in ansible (webserver_name: default). To run the playbook using this inventory, we need to specify the openstack.py file and the user to connect to the nodes. The user was previously defined in the hosts file, but as we don't use that now we need to pass it in the cli.
+```bash
+ansible-playbook -u ubuntu -i staging/openstack.py site.yml
+```
 
 
 The file itself can be found here (with interesting examples):
