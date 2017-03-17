@@ -29,7 +29,7 @@ openstack security group rule create --proto tcp --dst-port 5000 morse-sg
 
 Launch an instance.
 ```bash
-openstack server create --flavor m1.tiny --image $(openstack image list | awk '/Ubuntu/ {print $2}') --nic net-id=$(openstack network list | awk '/ morse-net / {print $2}') --security-group morse-sg --key-name mykey server-01
+openstack server create --flavor m1.tiny --image $(openstack image list | awk '/Ubuntu/ {print $2}') --nic net-id=$(openstack network list | awk '/ morse / {print $2}') --security-group $(openstack security group list | awk '/morse/ { print $2 }') --key-name mykey server-01
 ```
 
 Assign it a floating ip (from an available pool, e.g. public).
@@ -84,6 +84,19 @@ cd Morse
 . install.sh
 . run_flask
 ```
+
+If our webserver is only running this application, we may want to redirect all incoming traffic to port 80 to port 5000 (flask's default). If we have multiple cases, or only want the redirection for particular domain names, we can do this using Apache or NginX. For a simple case like this (all traffic in 80 --> 5000) we can modify the iptables:
+```bash
+sudo iptables -t nat -A OUTPUT -o lo -p tcp --dport 80 -j REDIRECT --to-port 5000
+```
+
+The above command can be disabled by using -D instead of -D.
+
+## Manual Load Balancer
+
+A load balancer can easily be created with flask by redirecting the inputs as in the (under-developed) "fl_load_balancer_poc.py" example. A random number can be generated to decide which webserver to redirect the traffic too. This is the only node that needs to be able to listen to port 80 (for example, configuring the iptables as shown above). This would be installed following the same steps as the web-server, but using the load_balancer flask file instead.
+
+Note that a much better way (for HA, hardware support, and maintainability) is to use the openstack LBaaS, but older versions don't have it (LBaaS v2 became a full feature in liberty).
 
 ## HEAT for stack creation
 
@@ -184,6 +197,12 @@ The file can be called simply as ./openstack --list, although it's better to fil
 ./openstack.py --list | jq -r '._meta.hostvars[].ansible_ssh_host'
 # List of groups
 ./openstack.py --list | jq -r '._meta.hostvars[].openstack.metadata.group'
+```
+
+Inside the playbook, the IP private and public adresses can be acquired in a similar way as before:
+```bash
+ansible -i staging/openstack.py webservers -m debug -a "var=hostvars[groups['dbservers'][0]].openstack.private_v4"
+ansible -i staging/openstack.py webservers -m debug -a "var=hostvars[groups['dbservers'][0]].openstack.accessIPv4"
 ```
 
 The way to get the addresses automatically is to create in heat the appropriate groups that are referenced in ansible (webserver_name: default). To run the playbook using this inventory, we need to specify the openstack.py file and the user to connect to the nodes. The user was previously defined in the hosts file, but as we don't use that now we need to pass it in the cli.

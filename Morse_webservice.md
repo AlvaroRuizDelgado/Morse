@@ -23,8 +23,10 @@
 - [x] Modularize HEAT templates, provision a variable number of nodes.
 - [x] Modify the flask app to use a database in a dedicated node.
 - [x] Provision database node through HEAT/Ansible.
-- [ ] Connect HEAT and Ansible (dynamic inventory, controller node).
+- [x] Connect HEAT and Ansible (dynamic inventory, controller node).
 - [ ] Load balancer for the extra web servers.
+  - [x] "Manual load balancer"
+  - [ ] Openstack LBaaS
 - [ ] Jenkins based test to check that the result can be decoded into the original text.
 - [ ] FFS: docker, GitLab, Gerrit
 
@@ -48,7 +50,7 @@
   Channel 13: open failed: connect failed: Connection refused
   ```
     - [x] Closing and opening the terminal application solves the issue, as it loads the .ssh/config file.
-  - [ ] Dynamic inventory to hook Ansible.
+  - [x] Dynamic inventory to hook Ansible.
   - [x] Separate the modules in different files (type: lib/file.yaml).
   - [ ] I'm using an existing key, I should use one prepared in advance in a different folder.
   - [x] Heat doesn't accept .yml, only .yaml!
@@ -74,7 +76,9 @@
   - [ ] Do pip install --upgrade setuptools before using pip.
 
 - [ ] LBaaS
-  - [ ] LBaaS v2 not currently installed in our openstack. Even though it was only experimental in Kilo (our version), it seems that the core functions were mostly the same.
+  - [x] LBaaS v2 not currently installed in our openstack. Even though it was only experimental in Kilo (our version), it seems that the core functions were mostly the same.
+  - [ ] Make one by hand to learn.
+  - [ ] Configure it in Ocata.
 
 - [ ] SSH
   - [x] I wasn't sure how to access the server I created in the OpenStack machine. The options I saw are listed below (note that none would allow for icmp to work). In the end SSH port redirection is the easiest and the one that has the least impact.
