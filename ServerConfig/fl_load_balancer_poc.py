@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import os
+import os, random
 from flask import Flask,redirect
 
 app = Flask(__name__)
@@ -8,13 +8,20 @@ app = Flask(__name__)
 @app.route('/')
 def hello():
     # We start the values at 1, because we are going to use the len() function to set the limits in the randint part.
-    webservers = {
-           1 : "http://www.google.com",
-           2 : "http://www.yahoo.com"
-    }
-    return redirect(webservers[randint(1,len(webservers))])
-#    return redirect("http://www.google.com")
-#    return redirect("http://192.168.100.205:5000")
+
+    # No need to import random
+    # webservers = {
+    #        1 : "http://www.google.com",
+    #        2 : "http://www.yahoo.com"
+    # }
+    # return redirect(webservers[randint(1,len(webservers))])
+
+    # Importing random
+    webservers = [
+           "http://www.google.com",
+           "http://www.yahoo.com"
+    ]
+    return redirect(random.choice(webservers))
 
 if __name__ == '__main__':
     # Bind to PORT if defined, otherwise default to 5000.

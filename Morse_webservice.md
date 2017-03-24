@@ -27,8 +27,9 @@
 - [ ] Load balancer for the extra web servers.
   - [x] "Manual load balancer"
   - [ ] Openstack LBaaS
+- [ ] Docker
 - [ ] Jenkins based test to check that the result can be decoded into the original text.
-- [ ] FFS: docker, GitLab, Gerrit
+- [ ] FFS: GitLab, Gerrit
 
 ## Miscellanea
 
