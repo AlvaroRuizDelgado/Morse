@@ -10,7 +10,7 @@ parameters:
   webserver_node_count:
     type: number
     description: number of webserver nodes
-    default: 2
+    default: 1
   key_name:
     type: string
     label: Key Name
