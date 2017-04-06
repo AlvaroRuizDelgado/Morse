@@ -27,7 +27,7 @@
 - [ ] Load balancer for the extra web servers.
   - [x] "Manual load balancer"
   - [ ] Openstack LBaaS
-    - [ ] Remote dynamic inventory.
+    - [x] Remote dynamic inventory.
 - [ ] Sanitize the network situation --> no floating IPs for VMs.
 - [ ] Docker
 - [ ] Jenkins based test to check that the result can be decoded into the original text.

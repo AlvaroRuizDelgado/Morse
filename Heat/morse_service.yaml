@@ -66,6 +66,18 @@ parameters:
     description: allocation cidr for net1
     default: 192.168.0.0/24
 
+  # LBaaS settings
+  lb_floatingip_id:
+    type: string
+    description: floating ip ID to use for LB
+  lb_port:
+    type: number
+    default: 80
+    description: Port used by the loadbalancer
+  app_port:
+    type: number
+    default: 5000
+    description: Port used by servers
 
 resources:
   app_network:
@@ -128,8 +140,35 @@ resources:
             group_name: { get_param: dbserver_name }
             node_security_group: { get_attr: [app_security_group, app_security_group_ID] }
             node_userdata: { get_file: initial_config.sh }
-            # pool: { get_resource: pool }
-            # app_port: { get_param: app_port}
+            pool: { get_resource: pool }
+            app_port: { get_param: app_port}
+
+
+  loadbalancer:
+    type: OS::Neutron::LBaaS::LoadBalancer
+    properties:
+      vip_subnet: { get_attr: [app_network, app_subnet] }
+
+  pool:
+    type: OS::Neutron::LBaaS::Pool
+    properties:
+      lb_algorithm: ROUND_ROBIN
+      protocol: HTTP
+      listener: { get_resource: listener }
+
+  listener:
+    type: OS::Neutron::LBaaS::Listener
+    properties:
+      loadbalancer: { get_resource: loadbalancer }
+      protocol: HTTP
+      protocol_port: { get_param: lb_port }
+
+  LBfloatingip_association:
+    type: OS::Neutron::FloatingIPAssociation
+    properties:
+      floatingip_id: { get_param: lb_floatingip_id }
+      port_id: { get_attr: [loadbalancer, vip_port_id ]}
+
 
 outputs:
   network_id:
