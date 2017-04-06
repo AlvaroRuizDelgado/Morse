@@ -8,11 +8,12 @@ fi
 echo $stack_name
 
 cd Heat
-heat stack-create -f morse_service.yaml $stack_name
+# heat stack-create -f morse_service.yaml $stack_name
+openstack stack create -t morse_service.yaml $stack_name
 cd ..
 
 echo "Waiting until the stack creation is completed."
-while [ $(heat stack-list | awk '/'"$stack_name"'/ { print $6 }') != "CREATE_COMPLETE" ]
+while [ $(openstack stack list | awk '/'"$stack_name"'/ { print $6 }') != "CREATE_COMPLETE" ]
 do
     echo -n "...."
     sleep 10
