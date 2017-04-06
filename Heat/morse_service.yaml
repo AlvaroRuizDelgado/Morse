@@ -115,8 +115,8 @@ resources:
             group_name: { get_param: webserver_name }
             node_security_group: { get_attr: [app_security_group, app_security_group_ID] }
             node_userdata: { get_file: initial_config.sh }
-            # pool: { get_resource: pool }
-            # app_port: { get_param: app_port}
+            pool: { get_resource: pool }
+            app_port: { get_param: app_port}
 
   dbservers:
     type: OS::Heat::ResourceGroup
@@ -183,3 +183,6 @@ outputs:
   public_ip:
     description: Public IP address of the deployed instance
     value: { get_attr: [ webservers, "node_floating_IP" ] }
+  lb_floatingip_id:
+    description: Assigned floatingIP ID to the loadbalancer
+    value: { get_param: lb_floatingip_id }

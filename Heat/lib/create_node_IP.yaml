@@ -39,14 +39,14 @@ parameters:
   node_security_group:
     type: string
     description: security group to assign
-  # # LBaaS settings
-  # pool:
-  #   type: string
-  #   description: name of LB Pool
-  # app_port:
-  #   type: number
-  #   description: port used by servers
-  #   default: 80
+  # LBaaS settings
+  pool:
+    type: string
+    description: name of LB Pool
+  app_port:
+    type: number
+    description: port used by servers
+    default: 5000
 
 resources:
   node:
@@ -82,6 +82,14 @@ resources:
       floatingip_id: { get_resource: floating_IP }
       port_id: { get_resource: node_port }
       # port_id: {get_attr: [morse_server, addresses, {get_resource: private_network}, 0, port]}
+
+  pool_member:
+    type: OS::Neutron::LBaaS::PoolMember
+    properties:
+      pool: { get_param: pool }
+      address: { get_attr: [ node, first_address ] }
+      protocol_port: { get_param: app_port }
+      subnet: { get_param: node_subnet_id }
 
   boot_script:
     type: OS::Heat::SoftwareConfig
