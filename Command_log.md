@@ -76,6 +76,11 @@ export FLASK_APP=hello_world.py
 flask run --host=0.0.0.0
 ```
 
+A flask application can be launched directly as well:
+```bash
+nohup ./fl_morse.py localhost --host=0.0.0.0 --port=5000 > flask.log 2>&1 &
+```
+
 Or, from git:
 ```bash
 sudo apt-get install -y git
@@ -98,6 +103,38 @@ A load balancer can easily be created with flask by redirecting the inputs as in
 
 Note that a much better way (for HA, hardware support, and maintainability) is to use the openstack LBaaS, but older versions don't have it (LBaaS v2 became a full feature in liberty).
 
+## LBaaS v2
+
+In OpenStack Liberty or above an LBaaS load balancer can be configured as shown below. Accessing the load balancer in the indicated port (80 below) will make it access each member in its specified protocol port.
+```bash
+neutron lbaas-loadbalancer-create --name test-lb sub_net-morse
+neutron port-update --security-group $(openstack security group list | awk '/morse/ { print $2 }') $(neutron lbaas-loadbalancer-show test-lb | awk '/vip_port_id/ { print $4 }')
+neutron lbaas-listener-create \
+  --name test-lb-http \
+  --loadbalancer test-lb \
+  --protocol HTTP \
+  --protocol-port 80
+openstack floating ip create public
+neutron floatingip-associate $(openstack floating ip list | awk '/None/ { print $2 }') $(neutron lbaas-loadbalancer-show test-lb | awk '/vip_port_id/ { print $4 }')
+neutron lbaas-pool-create \
+  --name test-lb-pool-http \
+  --lb-algorithm ROUND_ROBIN \
+  --listener test-lb-http \
+  --protocol HTTP
+neutron lbaas-member-create \
+  --name test-lb-http-member-1 \
+  --subnet sub_net-morse \
+  --address 192.168.50.125 \
+  --protocol-port 5000 \
+  test-lb-pool-http
+neutron lbaas-member-create \
+  --name test-lb-http-member-2 \
+  --subnet sub_net-morse \
+  --address 192.168.50.130 \
+  --protocol-port 5000 \
+  test-lb-pool-http
+```
+
 ## HEAT for stack creation
 
 First, install the client in a virtual environment.
@@ -106,15 +143,21 @@ First, install the client in a virtual environment.
 pip install python-heatclient
 ```
 
-Then, acquire the HOT file in a controller node (e.g. scp).
+Then, acquire the HOT file in a controller node (e.g. scp), or remotely by using appropriate environment variables.
 ```bash
 scp test.yaml student-ruiz@openstack:Heat/test.yaml
 ```
 
 Run the HOT file.
 ```bash
-heat stack-create -f test.yaml heat-test
+heat stack-create -f morse_service.yaml heat-test
 ```
+
+Or, alternatively:
+```bash
+openstack stack create -t morse_service.yaml heat-test
+```
+(in this case, make sure that the launching user has the role "heat_stack_owner").
 
 ## Ansible for server configuration
 
