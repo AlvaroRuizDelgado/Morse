@@ -5,12 +5,14 @@ else
     stack_name=$1
 fi
 # Confirm the existence of required elements.
-keypair_id=$(openstack keypair list | awk '/fakekey/ { print $2 }')
+keypair_id=$(openstack keypair list | awk '/mykey/ { print $2 }')
 echo $keypair_id
 lbaas_ip_id=$(openstack floating ip list | awk '/None/ { print $2 }')
 echo $lbaas_ip_id
-if [[ -z "$keypair_id" || -z "$lbaas_ip_id"]]; then
+
+if [[ -z "$keypair_id" || -z "$lbaas_ip_id" ]]; then
   echo "Please create a keypair and a floating IP for the LBaaS."
+  exit 1
 fi
 
 echo $stack_name
