@@ -24,10 +24,11 @@
 - [x] Modify the flask app to use a database in a dedicated node.
 - [x] Provision database node through HEAT/Ansible.
 - [x] Connect HEAT and Ansible (dynamic inventory, controller node).
-- [ ] Load balancer for the extra web servers.
+- [x] Load balancer for the extra web servers.
   - [x] "Manual load balancer"
-  - [ ] Openstack LBaaS
+  - [x] Openstack LBaaS
     - [x] Remote dynamic inventory.
+  - [ ] Modify openstack.py to focus on a given stack.
 - [ ] Sanitize the network situation --> no floating IPs for VMs.
 - [ ] Docker
 - [ ] Jenkins based test to check that the result can be decoded into the original text.
@@ -73,15 +74,17 @@
       - [ ] If I'm using nohup, I should check whether it's already running (registry variable). Ignoring the error works in this case, but it's not good practice.
         - [x] I'm killing it if it exists, still can't figure how to check if it's running using shell and a register. If the process is not there, it fails and ends --> ignore_errors: yes.
     - [ ] The best option is to make it a service and use the "service" module.
-  - [ ] Openstack.py to retrieve the IPs of the instances created by Heat and add them to hosts. How to continue to Ansible from Heat?
-    - [ ] I can make a script that joins both together, as long as they are in the controller.
+  - [x] Openstack.py to retrieve the IPs of the instances created by Heat and add them to hosts. How to continue to Ansible from Heat?
+    - [x] I can make a script that joins both together, as long as they are in the controller.
+      - [x] Adding the proper environment variables, it can be remote.
+    - [ ] I would like to make it so it only retrieves IPs of a given stack.
   - [x] Separate the modules in different files (or folders in this case).
   - [ ] Do pip install --upgrade setuptools before using pip.
 
-- [ ] LBaaS
+- [x] LBaaS
   - [x] LBaaS v2 not currently installed in our openstack. Even though it was only experimental in Kilo (our version), it seems that the core functions were mostly the same.
-  - [ ] Make one by hand to learn.
-  - [ ] Configure it in Ocata.
+  - [x] Make one by hand to learn.
+  - [x] Configure it in Ocata.
 
 - [ ] SSH
   - [x] I wasn't sure how to access the server I created in the OpenStack machine. The options I saw are listed below (note that none would allow for icmp to work). In the end SSH port redirection is the easiest and the one that has the least impact.
@@ -102,7 +105,8 @@
       - This works for those LocalForward, but changing those fields later on to address freshly created nodes, or adding extra ones, doesn't work, as those addresses are already assigned to the bastion proxy.
   - [x] SSH bastion setup for Ansible.
   - [ ] SSH multiplexing through ControlMaster. It seems though that it may not be a good idea, as killing the parent ssh connection could take down the whole thing. Should I use it?
-  - [ ] I would like a less clunky way to reload the config file, without having to restart the terminal.
+  - [x] I would like a less clunky way to reload the config file, without having to restart the terminal.
+    - [x] "sudo restart ssh" seems to be the right answer.
 
 - [ ] Test automation --> Jenkins
   - [x] My manual main test consists on running "curl IP:5000" and see that it works.
