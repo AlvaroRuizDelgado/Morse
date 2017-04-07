@@ -4,12 +4,20 @@ then
 else
     stack_name=$1
 fi
+# Confirm the existence of required elements.
+keypair_id=$(openstack keypair list | awk '/fakekey/ { print $2 }')
+echo $keypair_id
+lbaas_ip_id=$(openstack floating ip list | awk '/None/ { print $2 }')
+echo $lbaas_ip_id
+if [[ -z "$keypair_id" || -z "$lbaas_ip_id"]]; then
+  echo "Please create a keypair and a floating IP for the LBaaS."
+fi
 
 echo $stack_name
 
 cd Heat
 # heat stack-create -f morse_service.yaml $stack_name
-openstack stack create -t morse_service.yaml $stack_name
+openstack stack create -t morse_service.yaml $stack_name --parameter key_name=$keypair_id --parameter lb_floatingip_id=$lbaas_ip_id
 cd ..
 
 echo "Waiting until the stack creation is completed."
