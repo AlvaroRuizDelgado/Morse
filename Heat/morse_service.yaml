@@ -147,7 +147,7 @@ resources:
   loadbalancer:
     type: OS::Neutron::LBaaS::LoadBalancer
     properties:
-      vip_subnet: { get_attr: [app_network, app_subnet] }
+            vip_subnet: { get_attr: [app_network, app_subnet_ID] }
 
   pool:
     type: OS::Neutron::LBaaS::Pool
