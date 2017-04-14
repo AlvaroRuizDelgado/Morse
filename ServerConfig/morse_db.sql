@@ -1,4 +1,5 @@
-CREATE DATABASE IF NOT EXISTS morse;
+DROP DATABASE IF EXISTS morse;
+CREATE DATABASE morse;
 GRANT ALL PRIVILEGES ON morse.* TO 'morse'@'localhost' IDENTIFIED BY 'morse';
 GRANT ALL PRIVILEGES ON morse.* TO 'morse'@'%' IDENTIFIED BY 'morse';
 USE morse;
