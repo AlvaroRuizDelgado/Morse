@@ -40,6 +40,9 @@
   - [x] I had a problem with the security group, I wasn't letting servers access each other (TCP 5000 wasn't allowed).
   - [ ] I'm not sure how to reload the nodes after making changes to the security group. They seem to keep using the old settings. Surely destroying it all and recreating is not a proper solution...
 
+- [ ] Change the name of the shared components to just "server" (now they are webserver_).
+- [ ] Give support to python 3 machines e.g. Ubuntu 16.04 (installing python 3 in the venv and appending the configuration would work).
+
 - [ ] Flask
   - [ ] Check the run.py executable, I'm confused about the naming conventions.
   - [ ] How to make a browser read the MD stuff?

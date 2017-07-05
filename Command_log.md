@@ -1,3 +1,29 @@
+## Quick VM creation
+
+### Network and router
+openstack network create net-test
+openstack subnet create --ip-version 4 --dns-nameserver 8.8.4.4 --network net-test --subnet-range 192.168.0.0/24 subnet-test
+openstack router create router-test
+neutron router-interface-add router-test subnet-test
+neutron router-gateway-set router-test public
+
+### Security group
+openstack security group create sg-basic
+openstack security group rule create --proto icmp --dst-port 0 sg-basic
+openstack security group rule create --proto tcp --dst-port 22 sg-basic
+openstack security group rule create --proto tcp --dst-port 80 sg-basic
+openstack security group rule create --proto tcp --dst-port 5000 sg-basic
+
+### Creating a Ubuntu Image
+curl -O http://cloud-images.ubuntu.com/xenial/current/xenial-server-cloudimg-amd64-disk1.img
+openstack image create --disk-format qcow2 --file ./Images/xenial-server-cloudimg-amd64-disk1.img Ubuntu-1604LTS
+
+### Server creation and IP
+openstack server create --flavor m1.tiny --image $(openstack image list | awk '/Ubuntu/ {print $2}') --security-group $(openstack security group list | awk '/sg-basic/ { print $2 }') --key-name mykey server-01
+
+openstack floating ip create public
+openstack server floating ip add server01 x.x.x.x
+
 ## Openstack cfg commands
 
 Create a private network.

@@ -5,8 +5,10 @@ else
     stack_name=$1
 fi
 # Confirm the existence of required elements.
+# - Keypair to inject into the VMs.
 keypair_id=$(openstack keypair list | awk '/mykey/ { print $2 }')
 echo $keypair_id
+# - Free floating ip connected to the public network.
 lbaas_ip_id=$(openstack floating ip list | awk '/None/ { print $2 }')
 echo $lbaas_ip_id
 
